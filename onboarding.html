@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorOS — Welcome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#050508;--deep:#0D0D18;--panel:#111120;
+  --border:rgba(123,47,255,0.18);--vb:rgba(123,47,255,0.28);
+  --violet:#7B2FFF;--vs:rgba(123,47,255,0.12);
+  --cyan:#00D4FF;--cs:rgba(0,212,255,0.1);
+  --red:#FF3B6B;--green:#00FFB2;--amber:#FFB800;
+  --ghost:#F0F0FF;--muted:rgba(240,240,255,0.45);--faint:rgba(240,240,255,0.1);
+}
+html,body{height:100%;background:var(--void);color:var(--ghost);font-family:'Inter',sans-serif;overflow:hidden}
+
+/* BG ATMOSPHERE */
+.bg-atmo{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 800px 600px at 20% 20%, rgba(123,47,255,0.15) 0%, transparent 65%),
+    radial-gradient(ellipse 600px 400px at 80% 80%, rgba(0,212,255,0.08) 0%, transparent 65%);
+}
+/* Subtle grid */
+.bg-grid{
+  position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.03;
+  background-image:
+    linear-gradient(var(--ghost) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ghost) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+
+.onboard-wrap{
+  position:relative;z-index:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+/* LOGO */
+.ob-logo{
+  position:fixed;top:24px;left:50%;transform:translateX(-50%);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  display:flex;align-items:center;gap:7px;letter-spacing:-.3px;
+  z-index:10;
+}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.logo-accent{color:var(--violet)}
+
+/* PROGRESS BAR */
+.ob-progress{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  height:2px;background:var(--faint);
+}
+.ob-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--violet),var(--cyan));
+  transition:width .5s ease;
+}
+
+/* STEP COUNTER */
+.ob-step-counter{
+  font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:32px;text-align:center;
+}
+
+/* SCREENS */
+.screen{
+  width:100%;max-width:580px;
+  display:none;
+  animation:fadeIn .4s ease;
+}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCREEN: WELCOME */
+.welcome-screen{text-align:center}
+.welcome-emoji{font-size:64px;display:block;margin-bottom:24px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.welcome-title{
+  font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,52px);
+  font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:16px;
+}
+.welcome-title .grad{
+  background:linear-gradient(135deg,var(--violet),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.welcome-sub{font-size:17px;color:var(--muted);max-width:400px;margin:0 auto 36px;line-height:1.7}
+.welcome-features{
+  display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:36px;
+}
+.wf-pill{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 14px;background:var(--panel);
+  border:1px solid var(--border);border-radius:100px;
+  font-size:13px;color:var(--muted);
+}
+.wf-pill span{font-size:15px}
+
+/* SCREEN: NAME */
+.screen-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:20px;padding:36px;position:relative;overflow:hidden;
+}
+.screen-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--violet),var(--cyan),var(--violet));
+}
+.screen-q{
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:700;
+  letter-spacing:-.5px;margin-bottom:6px;
+}
+.screen-hint{font-size:14px;color:var(--muted);margin-bottom:28px}
+
+.ob-input{
+  width:100%;background:var(--deep);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;
+  font-size:16px;color:var(--ghost);font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .2s;margin-bottom:8px;
+}
+.ob-input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(123,47,255,.1)}
+.ob-input::placeholder{color:var(--faint)}
+
+.ob-select-grid{
+  display:grid;gap:10px;margin-bottom:6px;
+}
+.ob-select-grid.cols-2{grid-template-columns:1fr 1fr}
+.ob-select-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.ob-opt{
+  padding:16px;background:var(--deep);border:1px solid var(--border);
+  border-radius:12px;cursor:pointer;transition:all .15s;
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+}
+.ob-opt:hover{border-color:var(--vb);background:var(--vs)}
+.ob-opt.selected{border-color:var(--violet);background:var(--vs)}
+.ob-opt .opt-icon{font-size:24px}
+.ob-opt .opt-label{font-size:14px;font-weight:600}
+.ob-opt .opt-desc{font-size:12px;color:var(--muted);line-height:1.4}
+
+/* Multi-select note */
+.multi-note{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+/* SCREEN: PLAN PICKER */
+.plan-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;
+}
+.plan-opt{
+  padding:18px 14px;background:var(--deep);border:1px solid var(--border);
+  border-radius:12px;cursor:pointer;transition:all .15s;text-align:center;
+}
+.plan-opt:hover{border-color:var(--vb)}
+.plan-opt.selected{border-color:var(--violet);background:var(--vs)}
+.plan-opt.featured{border-color:rgba(123,47,255,.4)}
+.plan-opt .po-icon{font-size:24px;margin-bottom:8px}
+.plan-opt .po-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.plan-opt .po-price{font-size:20px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-1px;margin-bottom:4px}
+.plan-opt .po-price span{font-size:12px;font-weight:400;color:var(--muted)}
+.plan-opt .po-features{font-size:11px;color:var(--muted);line-height:1.7}
+.popular-tag{
+  display:inline-block;padding:2px 8px;
+  background:var(--violet);border-radius:100px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;color:#fff;
+  margin-bottom:8px;
+}
+
+/* SCREEN: GOAL */
+.goal-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;
+}
+.goal-opt{
+  padding:16px;background:var(--deep);border:1px solid var(--border);
+  border-radius:12px;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:12px;
+}
+.goal-opt:hover{border-color:var(--vb);background:var(--vs)}
+.goal-opt.selected{border-color:var(--violet);background:var(--vs)}
+.goal-opt .go-icon{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.gi-v{background:var(--vs);border:1px solid var(--vb)}
+.gi-c{background:var(--cs);border:1px solid rgba(0,212,255,.2)}
+.gi-r{background:rgba(255,59,107,.08);border:1px solid rgba(255,59,107,.2)}
+.gi-g{background:rgba(0,255,178,.06);border:1px solid rgba(0,255,178,.15)}
+.goal-opt .go-info{}
+.goal-opt .go-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.goal-opt .go-desc{font-size:11px;color:var(--muted)}
+
+/* SCREEN: COMPLETE */
+.complete-screen{text-align:center}
+.complete-ring{
+  width:100px;height:100px;margin:0 auto 24px;
+  border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  box-shadow:0 0 60px rgba(123,47,255,.4);
+  animation:completePop .5s cubic-bezier(.36,1.56,.64,1) both;
+}
+@keyframes completePop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.complete-title{
+  font-family:'Syne',sans-serif;font-size:32px;font-weight:800;
+  letter-spacing:-1px;margin-bottom:10px;
+}
+.complete-sub{font-size:16px;color:var(--muted);max-width:380px;margin:0 auto 32px;line-height:1.7}
+.complete-checklist{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:20px;text-align:left;margin-bottom:28px;
+}
+.cc-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.cc-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;padding:7px 0;
+  border-bottom:1px solid var(--faint);
+}
+.cc-item:last-child{border-bottom:none}
+.cc-check{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--violet),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;
+}
+.cc-label{flex:1}
+.cc-tag{
+  font-size:11px;font-family:'JetBrains Mono',monospace;
+  padding:2px 7px;border-radius:100px;
+}
+.ct-v{background:var(--vs);color:var(--violet);border:1px solid var(--vb)}
+.ct-c{background:var(--cs);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.ct-g{background:rgba(0,255,178,.06);color:var(--green);border:1px solid rgba(0,255,178,.2)}
+
+/* NAV BUTTONS */
+.ob-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:20px;
+}
+.btn-ob-back{
+  padding:10px 20px;background:transparent;border:1px solid var(--border);
+  border-radius:8px;color:var(--muted);cursor:pointer;font-size:14px;
+  font-family:'Inter',sans-serif;transition:all .15s;
+}
+.btn-ob-back:hover{border-color:var(--ghost);color:var(--ghost)}
+.btn-ob-next{
+  padding:12px 28px;background:var(--violet);border:none;
+  border-radius:10px;color:#fff;cursor:pointer;font-size:14px;font-weight:600;
+  font-family:'Inter',sans-serif;transition:all .2s;
+  box-shadow:0 4px 20px rgba(123,47,255,.35);
+  display:flex;align-items:center;gap:8px;
+}
+.btn-ob-next:hover{box-shadow:0 4px 32px rgba(123,47,255,.5);transform:translateY(-1px)}
+.btn-ob-next:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-ob-skip{
+  background:none;border:none;color:var(--muted);font-size:13px;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:color .15s;padding:10px;
+}
+.btn-ob-skip:hover{color:var(--ghost)}
+
+.btn-ob-launch{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--violet),#4a1aad);border:none;
+  border-radius:12px;color:#fff;font-size:16px;font-weight:700;
+  font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;
+  box-shadow:0 6px 28px rgba(123,47,255,.35);letter-spacing:-.2px;
+}
+.btn-ob-launch:hover{box-shadow:0 8px 40px rgba(123,47,255,.5);transform:translateY(-2px)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .plan-row{grid-template-columns:1fr}
+  .ob-select-grid.cols-3{grid-template-columns:1fr 1fr}
+  .goal-grid{grid-template-columns:1fr}
+  .welcome-features{gap:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-atmo"></div>
+<div class="bg-grid"></div>
+
+<!-- PROGRESS BAR -->
+<div class="ob-progress">
+  <div class="ob-progress-fill" id="ob-progress" style="width:14%"></div>
+</div>
+
+<!-- LOGO -->
+<div class="ob-logo">
+  <div class="logo-dot"></div>
+  Creator<span class="logo-accent">OS</span>
+</div>
+
+<div class="onboard-wrap">
+  <div class="ob-step-counter" id="step-counter">Step 1 of 6</div>
+
+  <!-- SCREEN 1: WELCOME -->
+  <div class="screen active" id="screen-1">
+    <div class="welcome-screen">
+      <span class="welcome-emoji">🎬</span>
+      <h1 class="welcome-title">
+        Your YouTube studio<br>
+        <span class="grad">is ready to build.</span>
+      </h1>
+      <p class="welcome-sub">Let's set up your account in 2 minutes so your videos are always on-brand, on-strategy, and on schedule.</p>
+      <div class="welcome-features">
+        <div class="wf-pill"><span>✍️</span> AI Scripts</div>
+        <div class="wf-pill"><span>🎙️</span> Voiceover</div>
+        <div class="wf-pill"><span>⚡</span> Auto-Edit</div>
+        <div class="wf-pill"><span>📈</span> SEO</div>
+        <div class="wf-pill"><span>🚀</span> Export</div>
+      </div>
+      <button class="btn-ob-next" style="margin:0 auto" onclick="nextScreen()">
+        Let's Start <span>→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: NAME + CHANNEL -->
+  <div class="screen" id="screen-2">
+    <div class="screen-card">
+      <div class="screen-q">What should we call you?</div>
+      <div class="screen-hint">And your channel name, if you have one.</div>
+      <input type="text" class="ob-input" id="inp-name" placeholder="Your name or creator handle" oninput="validateStep()">
+      <input type="text" class="ob-input" id="inp-channel" placeholder="Channel name (optional)">
+      <div class="ob-nav">
+        <button class="btn-ob-back" onclick="prevScreen()">← Back</button>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="btn-ob-skip" onclick="nextScreen()">Skip</button>
+          <button class="btn-ob-next" id="btn-2-next" onclick="nextScreen()">Continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: NICHE -->
+  <div class="screen" id="screen-3">
+    <div class="screen-card">
+      <div class="screen-q">What's your content niche?</div>
+      <div class="screen-hint">Pick all that apply — we'll tune scripts and SEO for you.</div>
+      <div class="multi-note">Select all that apply</div>
+      <div class="ob-select-grid cols-3">
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">🌌</div>
+          <div class="opt-label">Science &amp; Space</div>
+        </div>
+        <div class="ob-opt selected" onclick="toggleOpt(this)">
+          <div class="opt-icon">😱</div>
+          <div class="opt-label">Horror &amp; Mystery</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">💪</div>
+          <div class="opt-label">Motivation</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">📚</div>
+          <div class="opt-label">Education</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">💰</div>
+          <div class="opt-label">Finance &amp; Wealth</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">🎮</div>
+          <div class="opt-label">Gaming</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">👶</div>
+          <div class="opt-label">Kids Content</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">🌍</div>
+          <div class="opt-label">Travel &amp; Culture</div>
+        </div>
+        <div class="ob-opt" onclick="toggleOpt(this)">
+          <div class="opt-icon">🔬</div>
+          <div class="opt-label">True Crime</div>
+        </div>
+      </div>
+      <div class="ob-nav">
+        <button class="btn-ob-back" onclick="prevScreen()">← Back</button>
+        <button class="btn-ob-next" onclick="nextScreen()">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: VIDEO STYLE + LANGUAGE -->
+  <div class="screen" id="screen-4">
+    <div class="screen-card">
+      <div class="screen-q">How do you want to create?</div>
+      <div class="screen-hint">This shapes how CreatorOS generates your visuals and voice.</div>
+      <div class="ob-select-grid cols-2" style="margin-bottom:20px">
+        <div class="ob-opt selected" onclick="singleOpt(this,'.style-opts')">
+          <div class="opt-icon">🎭</div>
+          <div class="opt-label">Faceless Video</div>
+          <div class="opt-desc">No camera required. AI visuals + voiceover.</div>
+        </div>
+        <div class="ob-opt style-opts" onclick="singleOpt(this,'.style-opts')">
+          <div class="opt-icon">🎨</div>
+          <div class="opt-label">Cartoon / Animated</div>
+          <div class="opt-desc">AI-drawn characters and scenes.</div>
+        </div>
+        <div class="ob-opt style-opts" onclick="singleOpt(this,'.style-opts')">
+          <div class="opt-icon">👤</div>
+          <div class="opt-label">AI Avatar</div>
+          <div class="opt-desc">A digital presenter speaks your script.</div>
+        </div>
+        <div class="ob-opt style-opts" onclick="singleOpt(this,'.style-opts')">
+          <div class="opt-icon">📱</div>
+          <div class="opt-label">Shorts First</div>
+          <div class="opt-desc">Optimized for 15–60 second vertical video.</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px">Primary Language</div>
+      <div class="ob-select-grid cols-3" style="margin-bottom:0">
+        <div class="ob-opt selected" onclick="singleOpt(this,'.lang-opts')">
+          <div class="opt-icon">🇬🇧</div>
+          <div class="opt-label">English</div>
+        </div>
+        <div class="ob-opt lang-opts" onclick="singleOpt(this,'.lang-opts')">
+          <div class="opt-icon">🇮🇳</div>
+          <div class="opt-label">Hindi</div>
+        </div>
+        <div class="ob-opt lang-opts" onclick="singleOpt(this,'.lang-opts')">
+          <div class="opt-icon">🔀</div>
+          <div class="opt-label">Hinglish</div>
+        </div>
+      </div>
+      <div class="ob-nav">
+        <button class="btn-ob-back" onclick="prevScreen()">← Back</button>
+        <button class="btn-ob-next" onclick="nextScreen()">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: GOAL + PLAN -->
+  <div class="screen" id="screen-5">
+    <div class="screen-card">
+      <div class="screen-q">What's your main goal?</div>
+      <div class="screen-hint">This helps us prioritize which features to show you first.</div>
+      <div class="goal-grid" style="margin-bottom:24px">
+        <div class="goal-opt selected" onclick="singleOpt(this,'.goal-opt')">
+          <div class="go-icon gi-v">🚀</div>
+          <div class="go-info">
+            <div class="go-name">Grow my channel fast</div>
+            <div class="go-desc">Viral hooks, trending topics, SEO first</div>
+          </div>
+        </div>
+        <div class="goal-opt" onclick="singleOpt(this,'.goal-opt')">
+          <div class="go-icon gi-c">⚡</div>
+          <div class="go-info">
+            <div class="go-name">Upload consistently</div>
+            <div class="go-desc">Content planner, batch creation, speed</div>
+          </div>
+        </div>
+        <div class="goal-opt" onclick="singleOpt(this,'.goal-opt')">
+          <div class="go-icon gi-r">💰</div>
+          <div class="go-info">
+            <div class="go-name">Monetize my channel</div>
+            <div class="go-desc">Hit 1K subs + 4K hours watch time</div>
+          </div>
+        </div>
+        <div class="goal-opt" onclick="singleOpt(this,'.goal-opt')">
+          <div class="go-icon gi-g">🎨</div>
+          <div class="go-info">
+            <div class="go-name">Build a brand/business</div>
+            <div class="go-desc">Authority content, consistent style, quality</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px">Choose Your Plan</div>
+      <div class="plan-row">
+        <div class="plan-opt" onclick="singleOpt(this,'.plan-opt')">
+          <div class="po-icon">⚡</div>
+          <div class="po-name">Free</div>
+          <div class="po-price">$0</div>
+          <div class="po-features">3 projects/mo<br>1-min exports<br>Watermark</div>
+        </div>
+        <div class="plan-opt selected featured" onclick="singleOpt(this,'.plan-opt')">
+          <div class="popular-tag">RECOMMENDED</div>
+          <div class="po-icon">🚀</div>
+          <div class="po-name">Creator Pro</div>
+          <div class="po-price">$19<span>/mo</span></div>
+          <div class="po-features">Unlimited projects<br>20-min 1080p<br>All features</div>
+        </div>
+        <div class="plan-opt" onclick="singleOpt(this,'.plan-opt')">
+          <div class="po-icon">🏢</div>
+          <div class="po-name">Studio</div>
+          <div class="po-price">$49<span>/mo</span></div>
+          <div class="po-features">4K + team seats<br>Character Studio<br>API access</div>
+        </div>
+      </div>
+      <div class="ob-nav">
+        <button class="btn-ob-back" onclick="prevScreen()">← Back</button>
+        <button class="btn-ob-next" onclick="nextScreen()">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: READY! -->
+  <div class="screen" id="screen-6">
+    <div class="complete-screen">
+      <div class="complete-ring">🎬</div>
+      <div class="complete-title">You're all set, <span id="user-name-display">Creator</span>!</div>
+      <p class="complete-sub">Your studio is configured and ready. You can make your first complete video right now — it takes about 5 minutes.</p>
+      <div class="complete-checklist">
+        <div class="cc-title">Your Studio is Configured</div>
+        <div class="cc-item">
+          <div class="cc-check">✓</div>
+          <div class="cc-label">Niche &amp; style preferences saved</div>
+          <span class="cc-tag ct-g">Done</span>
+        </div>
+        <div class="cc-item">
+          <div class="cc-check">✓</div>
+          <div class="cc-label">Language set to <span id="lang-display">English</span></div>
+          <span class="cc-tag ct-g">Done</span>
+        </div>
+        <div class="cc-item">
+          <div class="cc-check">✓</div>
+          <div class="cc-label">Creator Pro features unlocked</div>
+          <span class="cc-tag ct-v">PRO</span>
+        </div>
+        <div class="cc-item">
+          <div class="cc-check">✓</div>
+          <div class="cc-label">3 starter script templates ready</div>
+          <span class="cc-tag ct-c">Ready</span>
+        </div>
+      </div>
+      <button class="btn-ob-launch" onclick="window.location.href='dashboard.html'">
+        ✦ Open My Studio →
+      </button>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted)">Or <a href="dashboard.html" style="color:var(--cyan);text-decoration:none">skip to dashboard →</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentScreen = 1;
+const totalScreens = 6;
+const progressByStep = [0, 14, 28, 45, 62, 80, 100];
+
+function nextScreen() {
+  if (currentScreen >= totalScreens) return;
+  const curr = document.getElementById('screen-' + currentScreen);
+  curr.classList.remove('active');
+  currentScreen++;
+  const next = document.getElementById('screen-' + currentScreen);
+  next.classList.add('active');
+  updateProgress();
+  // Set user name in final screen
+  const nameInput = document.getElementById('inp-name');
+  if (nameInput && nameInput.value) {
+    document.getElementById('user-name-display').textContent = nameInput.value.split(' ')[0];
+  }
+}
+
+function prevScreen() {
+  if (currentScreen <= 1) return;
+  const curr = document.getElementById('screen-' + currentScreen);
+  curr.classList.remove('active');
+  currentScreen--;
+  const prev = document.getElementById('screen-' + currentScreen);
+  prev.classList.add('active');
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = progressByStep[currentScreen] || 0;
+  document.getElementById('ob-progress').style.width = pct + '%';
+  const names = ['', 'Step 1 of 6', 'Step 2 of 6', 'Step 3 of 6', 'Step 4 of 6', 'Step 5 of 6', "You're ready!"];
+  document.getElementById('step-counter').textContent = names[currentScreen] || '';
+}
+
+function toggleOpt(el) {
+  el.classList.toggle('selected');
+}
+
+function singleOpt(el, selector) {
+  el.closest('.screen-card, .complete-screen')?.querySelectorAll(selector).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function validateStep() {
+  // Could add per-step validation here
+}
+
+// Allow Enter to proceed
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && currentScreen < totalScreens) nextScreen();
+});
+</script>
+</body>
+</html>

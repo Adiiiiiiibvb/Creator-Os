@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorOS — Auto Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#03030A;--s1:#080812;--s2:#0D0D1A;--s3:#111120;--s4:#1A1A35;
+  --vio:#8B5CF6;--vs:rgba(139,92,246,0.12);--vb:rgba(139,92,246,0.28);
+  --teal:#06B6D4;--ts:rgba(6,182,212,0.1);
+  --org:#F97316;--grn:#10B981;--rose:#F43F5E;--amb:#F59E0B;
+  --txt:#EEEEFF;--muted:rgba(238,238,255,0.5);--faint:rgba(238,238,255,0.08);
+  --br:rgba(139,92,246,0.15);--br2:rgba(238,238,255,0.07);
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow:hidden}
+/* TOPBAR */
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(8,8,18,0.95);border-bottom:1px solid var(--br2);flex-shrink:0;z-index:50}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:center;gap:7px;letter-spacing:-.3px}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.logo-v{color:var(--vio)}
+.topbar-mid{display:flex;align-items:center;gap:10px}
+.project-name{font-size:13px;font-weight:600}
+.render-status{display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--vs);border:1px solid var(--vb);border-radius:100px;font-size:11px;color:var(--vio);font-family:'JetBrains Mono',monospace}
+.rs-dot{width:5px;height:5px;border-radius:50%;background:var(--vio);animation:pulse 1.5s infinite}
+.topbar-right{display:flex;gap:8px}
+.btn-sm{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s}
+.btn-ghost{background:transparent;border:1px solid var(--br2);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--vio);color:var(--txt)}
+.btn-teal{background:var(--teal);border:none;color:#000;font-weight:700}
+.btn-teal:hover{opacity:.85}
+.btn-orange{background:var(--org);border:none;color:#fff;font-weight:700}
+.btn-orange:hover{opacity:.85}
+/* LAYOUT */
+.editor-wrap{display:flex;flex-direction:column;height:100%}
+.editor-body{display:flex;flex:1;overflow:hidden}
+/* PREVIEW PANEL */
+.preview-panel{width:400px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--br2);display:flex;flex-direction:column;padding:16px;gap:14px;overflow-y:auto}
+.preview-panel::-webkit-scrollbar{width:3px}
+.preview-panel::-webkit-scrollbar-thumb{background:var(--br)}
+.preview-screen{
+  aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;position:relative;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+}
+.preview-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a0020 0%,#051a30 60%,#030a18 100%)}
+.preview-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(139,92,246,.2),transparent)}
+.preview-caption{
+  position:absolute;bottom:12px;left:12px;right:12px;
+  background:rgba(0,0,0,.75);border-radius:6px;padding:6px 10px;
+  font-size:12px;text-align:center;line-height:1.5;
+}
+.preview-scene-badge{
+  position:absolute;top:10px;left:10px;
+  background:rgba(0,0,0,.7);border-radius:5px;padding:3px 8px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);
+}
+.preview-time{
+  position:absolute;top:10px;right:10px;
+  background:rgba(0,0,0,.7);border-radius:5px;padding:3px 8px;
+  font-size:11px;font-family:'JetBrains Mono',monospace;
+}
+.playhead-bar{height:2px;background:var(--faint);border-radius:100px;margin:0 2px;position:relative}
+.playhead-fill{height:100%;background:linear-gradient(90deg,var(--vio),var(--teal));border-radius:100px;transition:width .1s linear}
+.playhead-dot{
+  width:12px;height:12px;border-radius:50%;
+  background:var(--vio);position:absolute;top:-5px;
+  box-shadow:0 0 8px var(--vio);cursor:grab;
+  transition:left .1s linear;
+}
+/* CONTROLS */
+.controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
+.ctrl-btn{
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--br2);
+  background:transparent;color:var(--muted);display:flex;align-items:center;
+  justify-content:center;font-size:13px;cursor:pointer;transition:all .12s;
+}
+.ctrl-btn:hover{border-color:var(--vio);color:var(--txt);background:var(--vs)}
+.ctrl-play{
+  width:44px;height:44px;background:var(--vio);border:none;border-radius:50%;
+  color:#fff;font-size:16px;cursor:pointer;transition:all .15s;
+  box-shadow:0 0 16px rgba(139,92,246,.4);
+}
+.ctrl-play:hover{box-shadow:0 0 28px rgba(139,92,246,.6)}
+.time-display{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin:0 4px}
+/* SCENE SETTINGS PANEL */
+.scene-settings{background:var(--s2);border:1px solid var(--br2);border-radius:12px;padding:14px}
+.ss-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px}
+.ss-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+.ss-label{font-size:12px;color:var(--muted);flex-shrink:0}
+.ss-val{font-size:12px;color:var(--txt);font-family:'JetBrains Mono',monospace}
+.ss-slider{
+  flex:1;height:3px;-webkit-appearance:none;background:var(--faint);border-radius:100px;cursor:pointer;
+}
+.ss-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--vio);box-shadow:0 0 6px rgba(139,92,246,.5)}
+.ss-select{background:var(--s1);border:1px solid var(--br2);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--txt);font-family:'Inter',sans-serif;outline:none;width:120px}
+.ss-select:focus{border-color:var(--vio)}
+/* MAIN EDITOR */
+.editor-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+/* TOOLBAR */
+.editor-toolbar{
+  height:44px;display:flex;align-items:center;gap:12px;
+  padding:0 16px;background:var(--s2);border-bottom:1px solid var(--br2);flex-shrink:0;
+}
+.tool-group{display:flex;gap:4px;align-items:center}
+.tool-divider{width:1px;height:20px;background:var(--br2);margin:0 4px}
+.tool-btn{
+  padding:5px 10px;border-radius:6px;background:transparent;
+  border:1px solid transparent;color:var(--muted);font-size:12px;
+  cursor:pointer;transition:all .12s;font-family:'Inter',sans-serif;
+  display:flex;align-items:center;gap:5px;
+}
+.tool-btn:hover{background:var(--vs);border-color:var(--br);color:var(--txt)}
+.tool-btn.active{background:var(--vs);border-color:var(--vb);color:var(--vio)}
+.zoom-control{display:flex;align-items:center;gap:6px;margin-left:auto}
+.zoom-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
+/* TRACKS AREA */
+.tracks-area{flex:1;overflow:auto;position:relative}
+.tracks-area::-webkit-scrollbar{height:6px;width:6px}
+.tracks-area::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+.tracks-inner{min-width:1200px;padding:12px 0}
+/* TRACK HEADER */
+.track-row{display:flex;align-items:stretch;margin-bottom:8px}
+.track-label{
+  width:120px;flex-shrink:0;
+  display:flex;align-items:center;gap:8px;
+  padding:0 12px;font-size:12px;color:var(--muted);
+  background:var(--s1);border-right:1px solid var(--br2);
+  border-top:1px solid var(--br2);border-bottom:1px solid var(--br2);
+  border-radius:8px 0 0 8px;
+}
+.tl-icon{font-size:14px;flex-shrink:0}
+.track-content{
+  flex:1;background:var(--s1);
+  border:1px solid var(--br2);border-radius:0 8px 8px 0;
+  padding:6px;display:flex;align-items:center;gap:4px;
+  min-height:52px;position:relative;
+  cursor:crosshair;
+}
+/* CLIP BLOCKS */
+.clip{
+  height:40px;border-radius:7px;position:relative;flex-shrink:0;
+  display:flex;align-items:center;padding:0 8px;overflow:hidden;
+  cursor:grab;user-select:none;transition:opacity .15s;
+}
+.clip:active{cursor:grabbing;opacity:.85}
+.clip-label{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:1;position:relative}
+.clip-duration{font-size:10px;font-family:'JetBrains Mono',monospace;opacity:.7;margin-left:4px;z-index:1;position:relative}
+.clip-resize{position:absolute;right:0;top:0;bottom:0;width:6px;cursor:col-resize;background:rgba(255,255,255,.1);border-radius:0 7px 7px 0}
+/* Scene clips */
+.clip-scene{background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(139,92,246,.15));border:1px solid rgba(139,92,246,.4)}
+.clip-scene.active-clip{border-color:var(--vio);box-shadow:0 0 12px rgba(139,92,246,.4)}
+/* Voice clip */
+.clip-voice{background:linear-gradient(135deg,rgba(6,182,212,.3),rgba(6,182,212,.15));border:1px solid rgba(6,182,212,.3)}
+/* Music clip */
+.clip-music{background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(16,185,129,.1));border:1px solid rgba(16,185,129,.25)}
+/* Caption clip */
+.clip-caption{background:linear-gradient(135deg,rgba(249,115,22,.25),rgba(249,115,22,.1));border:1px solid rgba(249,115,22,.25)}
+/* SFX clip */
+.clip-sfx{background:linear-gradient(135deg,rgba(244,63,94,.2),rgba(244,63,94,.08));border:1px solid rgba(244,63,94,.2)}
+/* WAVEFORM inside voice clip */
+.clip-wave{position:absolute;inset:0;display:flex;align-items:center;padding:0 6px;gap:1px;opacity:.4}
+.wave-bar-s{flex:1;background:var(--teal);border-radius:100px}
+/* RULER */
+.ruler{
+  display:flex;align-items:flex-end;padding:0 0 4px;
+  margin:0 0 8px;border-bottom:1px solid var(--br2);
+  padding-left:120px;
+}
+.ruler-mark{
+  display:flex;flex-direction:column;align-items:flex-start;
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  color:var(--faint);flex-shrink:0;
+}
+.ruler-tick{width:1px;height:6px;background:var(--faint);margin-bottom:2px}
+.ruler-tick.major{height:10px;background:var(--br)}
+/* PLAYHEAD CURSOR */
+.timeline-cursor{
+  position:absolute;top:0;bottom:0;width:2px;
+  background:var(--rose);left:120px;
+  pointer-events:none;z-index:10;
+}
+.timeline-cursor::before{
+  content:'▼';position:absolute;top:-12px;left:-6px;
+  color:var(--rose);font-size:12px;
+}
+/* CAPTION EDITOR */
+.caption-editor{
+  flex-shrink:0;height:140px;background:var(--s2);border-top:1px solid var(--br2);
+  display:flex;flex-direction:column;padding:10px 16px;
+}
+.ce-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ce-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.ce-scroll{flex:1;display:flex;gap:8px;overflow-x:auto;align-items:center;padding:4px 0}
+.ce-scroll::-webkit-scrollbar{height:3px}
+.ce-scroll::-webkit-scrollbar-thumb{background:var(--br)}
+.caption-block{
+  flex-shrink:0;width:160px;background:var(--s1);border:1px solid var(--br2);
+  border-radius:8px;padding:8px 10px;cursor:pointer;transition:border-color .12s;
+}
+.caption-block:hover,.caption-block.active{border-color:var(--org)}
+.cb-time{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--org);margin-bottom:3px}
+.cb-text{font-size:12px;color:var(--muted);line-height:1.4}
+/* RENDER PROGRESS */
+.render-overlay{
+  position:fixed;inset:0;background:rgba(3,3,10,.85);backdrop-filter:blur(12px);
+  z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+}
+.render-overlay.show{display:flex}
+.render-card{
+  background:var(--s2);border:1px solid var(--vb);border-radius:20px;
+  padding:48px;text-align:center;max-width:480px;width:100%;
+}
+.render-card::before{
+  content:'';display:block;height:2px;
+  background:linear-gradient(90deg,var(--vio),var(--teal));
+  border-radius:20px 20px 0 0;margin:-48px -48px 32px;
+}
+.render-icon{font-size:48px;margin-bottom:16px}
+.render-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.render-sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+.progress-bar{height:4px;background:var(--faint);border-radius:100px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--vio),var(--teal));border-radius:100px;transition:width .4s ease}
+.progress-pct{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--teal);text-align:right;margin-bottom:16px}
+.render-steps-list{text-align:left;display:flex;flex-direction:column;gap:6px}
+.rs-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.rs-item.done{color:var(--grn)}
+.rs-item.active{color:var(--txt)}
+.rs-icon{width:16px;text-align:center;flex-shrink:0}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--s3);border:1px solid var(--br);border-radius:10px;padding:12px 16px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.36,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+/* RESPONSIVE */
+@media(max-width:768px){.preview-panel{display:none}.editor-toolbar .tool-btn span{display:none}}
+</style>
+</head>
+<body>
+<div class="editor-wrap">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo"><div class="logo-dot"></div>Creator<span class="logo-v">OS</span></div>
+  <div class="topbar-mid">
+    <div class="project-name">10 Shocking Facts About Black Holes</div>
+    <div class="render-status"><div class="rs-dot"></div>Auto-assembled · 7:48</div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sm btn-ghost" onclick="toast('💾 Project saved')">Save</button>
+    <button class="btn-sm btn-ghost" onclick="toast('👁 Preview opened in new tab')">Preview</button>
+    <button class="btn-sm btn-teal" onclick="showRender()">⚡ Render Video</button>
+    <button class="btn-sm btn-orange" onclick="window.location.href='export.html'">Export →</button>
+  </div>
+</div>
+
+<div class="editor-body">
+
+  <!-- PREVIEW PANEL -->
+  <aside class="preview-panel">
+    <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.2px">Preview</div>
+
+    <div class="preview-screen">
+      <div class="preview-bg"></div>
+      <div class="preview-overlay"></div>
+      <div class="preview-scene-badge" id="scene-badge">SCENE 4 · 00:42</div>
+      <div class="preview-time" id="time-badge">1:22 / 7:48</div>
+      <div class="preview-caption" id="preview-caption">Time literally slows down near a black hole — Einstein predicted this, and it's real.</div>
+    </div>
+
+    <!-- Scrubber -->
+    <div>
+      <div class="playhead-bar" id="scrubber" onclick="scrubTo(event)">
+        <div class="playhead-fill" id="phead-fill" style="width:17%"></div>
+        <div class="playhead-dot" id="phead-dot" style="left:calc(17% - 6px)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)">0:00</span>
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)">7:48</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn" onclick="toast('⏮ Jumped to start')">⏮</button>
+      <button class="ctrl-btn" onclick="toast('⏪ Rewind 5s')">⏪</button>
+      <button class="ctrl-play" id="play-btn" onclick="togglePlay()">▶</button>
+      <button class="ctrl-btn" onclick="toast('⏩ Forward 5s')">⏩</button>
+      <button class="ctrl-btn" onclick="toast('⏭ Jumped to end')">⏭</button>
+      <span class="time-display" id="time-disp">1:22 / 7:48</span>
+    </div>
+
+    <!-- Scene Settings -->
+    <div class="scene-settings">
+      <div class="ss-title">Scene 4 Settings</div>
+      <div class="ss-row">
+        <span class="ss-label">Duration</span>
+        <input type="range" class="ss-slider" min="5" max="60" value="38" oninput="updateDuration(this.value)">
+        <span class="ss-val" id="dur-val">38s</span>
+      </div>
+      <div class="ss-row">
+        <span class="ss-label">Zoom</span>
+        <input type="range" class="ss-slider" min="100" max="130" value="108" oninput="updateZoom(this.value)">
+        <span class="ss-val" id="zoom-val">1.08×</span>
+      </div>
+      <div class="ss-row">
+        <span class="ss-label">Transition</span>
+        <select class="ss-select" onchange="toast('✓ Transition updated')">
+          <option>Dissolve</option>
+          <option selected>Hard Cut</option>
+          <option>Wipe Right</option>
+          <option>Fade Black</option>
+          <option>Zoom Blur</option>
+        </select>
+      </div>
+      <div class="ss-row">
+        <span class="ss-label">Mood</span>
+        <select class="ss-select" onchange="toast('✓ Mood updated')">
+          <option>Suspense</option>
+          <option selected>Revealing</option>
+          <option>Epic</option>
+          <option>Dramatic</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Voice settings -->
+    <div class="scene-settings">
+      <div class="ss-title">Audio Mix</div>
+      <div class="ss-row">
+        <span class="ss-label">Voice vol</span>
+        <input type="range" class="ss-slider" min="0" max="100" value="90" oninput="toast('🔊 Voice level: '+this.value+'%')">
+        <span class="ss-val">90%</span>
+      </div>
+      <div class="ss-row">
+        <span class="ss-label">Music vol</span>
+        <input type="range" class="ss-slider" min="0" max="50" value="15" oninput="toast('🎵 Music level: '+this.value+'%')">
+        <span class="ss-val">15%</span>
+      </div>
+      <div class="ss-row">
+        <span class="ss-label">Music mood</span>
+        <select class="ss-select" onchange="toast('🎵 Music theme updated')">
+          <option selected>Cinematic Dark</option>
+          <option>Epic Orchestral</option>
+          <option>Ambient Space</option>
+          <option>Tense Thriller</option>
+          <option>Hopeful Rise</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN EDITOR -->
+  <div class="editor-main">
+
+    <!-- TOOLBAR -->
+    <div class="editor-toolbar">
+      <div class="tool-group">
+        <button class="tool-btn active" onclick="setTool(this,'Select')">⬆ <span>Select</span></button>
+        <button class="tool-btn" onclick="setTool(this,'Split')">✂ <span>Split</span></button>
+        <button class="tool-btn" onclick="setTool(this,'Text')">T <span>Caption</span></button>
+        <button class="tool-btn" onclick="setTool(this,'SFX')">🔊 <span>SFX</span></button>
+      </div>
+      <div class="tool-divider"></div>
+      <div class="tool-group">
+        <button class="tool-btn" onclick="toast('↩ Undo')">↩ <span>Undo</span></button>
+        <button class="tool-btn" onclick="toast('↪ Redo')">↪ <span>Redo</span></button>
+      </div>
+      <div class="tool-divider"></div>
+      <div class="tool-group">
+        <button class="tool-btn" onclick="toast('🎨 Color grade panel opened')">🎨 <span>Grade</span></button>
+        <button class="tool-btn" onclick="toast('⚡ Auto-optimize applied')">⚡ <span>Auto-Fix</span></button>
+        <button class="tool-btn" onclick="toast('📊 Retention map overlay toggled')">📊 <span>Retention Map</span></button>
+      </div>
+      <div class="zoom-control">
+        <button style="background:transparent;border:1px solid var(--br2);border-radius:5px;color:var(--muted);width:24px;height:24px;cursor:pointer;font-size:14px" onclick="changeZoom(-10)">−</button>
+        <span class="zoom-label" id="zoom-pct">100%</span>
+        <button style="background:transparent;border:1px solid var(--br2);border-radius:5px;color:var(--muted);width:24px;height:24px;cursor:pointer;font-size:14px" onclick="changeZoom(10)">+</button>
+        <button class="tool-btn" style="margin-left:6px" onclick="toast('⚡ Timeline fit to window')">Fit</button>
+      </div>
+    </div>
+
+    <!-- TRACKS AREA -->
+    <div class="tracks-area" id="tracks">
+      <div class="tracks-inner" id="tracks-inner">
+
+        <!-- RULER -->
+        <div class="ruler" id="ruler"></div>
+
+        <!-- PLAYHEAD cursor -->
+        <div class="timeline-cursor" id="cursor" style="left:234px"></div>
+
+        <!-- SCENES TRACK -->
+        <div class="track-row">
+          <div class="track-label"><div class="tl-icon">🎬</div><span>Scenes</span></div>
+          <div class="track-content" id="scenes-track"></div>
+        </div>
+
+        <!-- VOICE TRACK -->
+        <div class="track-row">
+          <div class="track-label"><div class="tl-icon">🎙️</div><span>Voice</span></div>
+          <div class="track-content" id="voice-track">
+            <div class="clip clip-voice" style="width:860px" onclick="toast('🎙️ Voice clip selected — 7:48 total')">
+              <div class="clip-wave" id="voice-wave"></div>
+              <span class="clip-label" style="color:var(--teal)">Marcus — English Voiceover</span>
+              <span class="clip-duration">7:48</span>
+              <div class="clip-resize"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MUSIC TRACK -->
+        <div class="track-row">
+          <div class="track-label"><div class="tl-icon">🎵</div><span>Music</span></div>
+          <div class="track-content" id="music-track">
+            <div class="clip clip-music" style="width:860px" onclick="toast('🎵 Music: Cinematic Dark — 8:00')">
+              <span class="clip-label" style="color:var(--grn)">Cinematic Dark — Background Music</span>
+              <span class="clip-duration">8:00</span>
+              <div class="clip-resize"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAPTIONS TRACK -->
+        <div class="track-row">
+          <div class="track-label"><div class="tl-icon">💬</div><span>Captions</span></div>
+          <div class="track-content" id="captions-track"></div>
+        </div>
+
+        <!-- SFX TRACK -->
+        <div class="track-row">
+          <div class="track-label"><div class="tl-icon">🔊</div><span>SFX</span></div>
+          <div class="track-content" id="sfx-track">
+            <div style="width:40px"></div>
+            <div class="clip clip-sfx" style="width:60px" onclick="toast('🔊 Deep rumble SFX — 0:03')">
+              <span class="clip-label" style="color:var(--rose);font-size:9px">Deep Rumble</span>
+            </div>
+            <div style="width:80px"></div>
+            <div class="clip clip-sfx" style="width:50px" onclick="toast('🔊 Whoosh SFX — 0:02')">
+              <span class="clip-label" style="color:var(--rose);font-size:9px">Whoosh</span>
+            </div>
+            <div style="width:120px"></div>
+            <div class="clip clip-sfx" style="width:55px" onclick="toast('🔊 Bass hit SFX — 0:02')">
+              <span class="clip-label" style="color:var(--rose);font-size:9px">Bass Hit</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CAPTION EDITOR -->
+    <div class="caption-editor">
+      <div class="ce-header">
+        <div class="ce-title">Caption Timeline — Click to edit</div>
+        <div style="display:flex;gap:8px">
+          <button class="tool-btn" onclick="toast('📥 SRT imported')">Import SRT</button>
+          <button class="tool-btn" onclick="toast('📤 SRT exported')">Export SRT</button>
+          <button class="tool-btn" onclick="toast('🤖 Auto-captions re-generated')">↺ Re-generate</button>
+        </div>
+      </div>
+      <div class="ce-scroll" id="caption-list"></div>
+    </div>
+
+  </div><!-- /editor-main -->
+</div><!-- /editor-body -->
+</div><!-- /editor-wrap -->
+
+<!-- RENDER OVERLAY -->
+<div class="render-overlay" id="render-overlay">
+  <div class="render-card">
+    <div class="render-icon">⚙️</div>
+    <div class="render-title">Rendering Your Video</div>
+    <div class="render-sub">Assembling 10 scenes · Adding captions · Mixing audio</div>
+    <div class="progress-bar"><div class="progress-fill" id="r-fill" style="width:0%"></div></div>
+    <div class="progress-pct" id="r-pct">0% — Initializing…</div>
+    <div class="render-steps-list" id="r-steps"></div>
+    <div style="margin-top:20px;display:flex;gap:10px">
+      <button onclick="hideRender()" style="flex:1;padding:10px;background:transparent;border:1px solid var(--br2);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ── DATA ──
+const scenes = [
+  {n:1,label:'Hook — Marble Earth',dur:12,color:'rgba(139,92,246,.35)'},
+  {n:2,label:'Intro — Extreme Universe',dur:28,color:'rgba(139,92,246,.28)'},
+  {n:3,label:'Fact #1 — Don\'t Suck',dur:50,color:'rgba(139,92,246,.32)'},
+  {n:4,label:'Fact #2 — Time Slows',dur:45,color:'rgba(139,92,246,.38)'},
+  {n:5,label:'Fact #3 — Event Horizon',dur:42,color:'rgba(139,92,246,.30)'},
+  {n:6,label:'Fact #4 — Spaghettification',dur:48,color:'rgba(139,92,246,.34)'},
+  {n:7,label:'Fact #5 — Hawking Radiation',dur:55,color:'rgba(139,92,246,.28)'},
+  {n:8,label:'Fact #6 — Information Paradox',dur:50,color:'rgba(139,92,246,.32)'},
+  {n:9,label:'Fact #7 — Black Hole Mergers',dur:44,color:'rgba(139,92,246,.36)'},
+  {n:10,label:'Outro + CTA',dur:54,color:'rgba(139,92,246,.30)'},
+];
+const captions = [
+  {t:'0:00',text:'What if I told you there\'s an object so dense that not even light can escape?'},
+  {t:'0:12',text:'Black holes are the universe\'s most extreme objects.'},
+  {t:'0:42',text:'Fact #1: Black holes don\'t actually suck.'},
+  {t:'1:22',text:'Time literally slows down near a black hole — Einstein predicted this.'},
+  {t:'2:10',text:'If you crossed the event horizon, you\'d see the entire future of the universe.'},
+  {t:'2:55',text:'Spaghettification: gravity would stretch you like a strand of pasta.'},
+  {t:'3:40',text:'Hawking Radiation means black holes slowly evaporate over billions of years.'},
+  {t:'4:30',text:'The information paradox is one of physics\' biggest unsolved mysteries.'},
+  {t:'5:20',text:'Two merging black holes created the loudest sound in the universe.'},
+  {t:'6:00',text:'Subscribe if your mind is blown — next week gets even stranger.'},
+];
+const renderSteps = [
+  'Validating assets','Applying Ken Burns zoom','Generating caption SRT',
+  'Mixing audio tracks','Assembling scene clips','Burning captions',
+  'Adding transitions','Applying color grade','Encoding H.264','Uploading to storage'
+];
+
+// ── BUILD RULER ──
+const ruler = document.getElementById('ruler');
+for(let i=0;i<=47;i++){
+  const m = document.createElement('div');
+  m.className = 'ruler-mark';
+  m.style.width = '18px';
+  const tick = document.createElement('div');
+  tick.className = 'ruler-tick' + (i%5===0?' major':'');
+  m.appendChild(tick);
+  if(i%5===0){
+    const s = i*10;
+    const lbl = document.createElement('span');
+    lbl.textContent = Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');
+    m.appendChild(lbl);
+  }
+  ruler.appendChild(m);
+}
+
+// ── BUILD SCENES TRACK ──
+const sceneTrack = document.getElementById('scenes-track');
+let activeScene = 3;
+scenes.forEach((sc,i)=>{
+  const px = Math.round(sc.dur * 1.9);
+  const clip = document.createElement('div');
+  clip.className = 'clip clip-scene' + (i===activeScene?' active-clip':'');
+  clip.style.width = px+'px';
+  clip.style.background = sc.color;
+  clip.innerHTML = `<span class="clip-label">${sc.label}</span><span class="clip-duration">${sc.dur}s</span><div class="clip-resize"></div>`;
+  clip.title = `Scene ${sc.n}: ${sc.label} — ${sc.dur}s`;
+  clip.addEventListener('click',()=>{
+    document.querySelectorAll('.clip-scene').forEach(c=>c.classList.remove('active-clip'));
+    clip.classList.add('active-clip');
+    document.getElementById('scene-badge').textContent = `SCENE ${sc.n} · ${clip.style.marginLeft||'0:00'}`;
+    document.querySelector('.ss-title').textContent = `Scene ${sc.n} Settings`;
+    toast(`🎬 Scene ${sc.n}: ${sc.label}`);
+  });
+  sceneTrack.appendChild(clip);
+  // gap
+  const gap = document.createElement('div');
+  gap.style.width = '4px';
+  sceneTrack.appendChild(gap);
+});
+
+// ── BUILD CAPTIONS ──
+const captionList = document.getElementById('caption-list');
+captions.forEach((c,i)=>{
+  const block = document.createElement('div');
+  block.className = 'caption-block' + (i===3?' active':'');
+  block.innerHTML = `<div class="cb-time">${c.t}</div><div class="cb-text">${c.text.substring(0,55)}${c.text.length>55?'…':''}</div>`;
+  block.addEventListener('click',()=>{
+    document.querySelectorAll('.caption-block').forEach(b=>b.classList.remove('active'));
+    block.classList.add('active');
+    document.getElementById('preview-caption').textContent = c.text;
+  });
+  captionList.appendChild(block);
+});
+
+// ── BUILD VOICE WAVEFORM ──
+const vw = document.getElementById('voice-wave');
+for(let i=0;i<120;i++){
+  const b = document.createElement('div');
+  b.className = 'wave-bar-s';
+  b.style.height = (10+Math.random()*80)+'%';
+  b.style.animationDelay = (Math.random()*.5)+'s';
+  vw.appendChild(b);
+}
+
+// ── CAPTIONS TRACK ──
+const capTrack = document.getElementById('captions-track');
+captions.forEach((c,i)=>{
+  const offset = [0,20,62,108,145,175,210,250,285,315][i]||i*18;
+  const sp = document.createElement('div');
+  sp.style.width = (i===0?0:offset-([0,20,62,108,145,175,210,250,285,315][i-1]||0)-55)+'px';
+  sp.style.flexShrink = '0';
+  if(i>0) capTrack.appendChild(sp);
+  const clip = document.createElement('div');
+  clip.className = 'clip clip-caption';
+  clip.style.width = '55px';
+  clip.innerHTML = `<span class="clip-label" style="color:var(--org);font-size:9px">${c.t}</span>`;
+  clip.addEventListener('click',()=>{
+    document.getElementById('preview-caption').textContent = c.text;
+    toast('💬 Caption: '+c.text.substring(0,40)+'…');
+  });
+  capTrack.appendChild(clip);
+});
+
+// ── PLAYBACK SIMULATION ──
+let playing = false, progress = 17;
+let playTimer;
+function togglePlay(){
+  playing = !playing;
+  document.getElementById('play-btn').textContent = playing ? '⏸' : '▶';
+  if(playing){
+    playTimer = setInterval(()=>{
+      progress = Math.min(progress + 0.05, 100);
+      updateProgress(progress);
+      if(progress>=100){clearInterval(playTimer);playing=false;document.getElementById('play-btn').textContent='▶';progress=0}
+    },40);
+  } else clearInterval(playTimer);
+}
+function updateProgress(p){
+  document.getElementById('phead-fill').style.width = p+'%';
+  document.getElementById('phead-dot').style.left = `calc(${p}% - 6px)`;
+  const totalSec=468, cur=Math.round(p/100*totalSec);
+  const cm=Math.floor(cur/60),cs=cur%60,tm=Math.floor(totalSec/60),ts=totalSec%60;
+  const ts2=`${cm}:${cs.toString().padStart(2,'0')} / ${tm}:${ts.toString().padStart(2,'0')}`;
+  document.getElementById('time-disp').textContent=ts2;
+  document.getElementById('time-badge').textContent=ts2;
+  // move cursor
+  document.getElementById('cursor').style.left = (120 + (p/100)*860)+'px';
+}
+function scrubTo(e){
+  const bar=document.getElementById('scrubber');
+  const rect=bar.getBoundingClientRect();
+  progress=Math.max(0,Math.min(100,(e.clientX-rect.left)/rect.width*100));
+  updateProgress(progress);
+}
+
+// ── ZOOM ──
+let zoomLevel=100;
+function changeZoom(delta){
+  zoomLevel=Math.max(50,Math.min(300,zoomLevel+delta));
+  document.getElementById('zoom-pct').textContent=zoomLevel+'%';
+  document.getElementById('tracks-inner').style.transform=`scaleX(${zoomLevel/100})`;
+  document.getElementById('tracks-inner').style.transformOrigin='left center';
+}
+
+// ── TOOLS ──
+function setTool(btn,name){
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  toast(`🛠 Tool: ${name}`);
+}
+
+// ── SETTINGS ──
+function updateDuration(v){document.getElementById('dur-val').textContent=v+'s';toast('⏱ Duration: '+v+'s')}
+function updateZoom(v){document.getElementById('zoom-val').textContent=(v/100).toFixed(2)+'×'}
+
+// ── RENDER ──
+let renderTimer, renderPct=0, renderStep=0;
+function showRender(){
+  document.getElementById('render-overlay').classList.add('show');
+  renderPct=0;renderStep=0;
+  document.getElementById('r-fill').style.width='0%';
+  document.getElementById('r-pct').textContent='0% — Initializing…';
+  const sl=document.getElementById('r-steps');
+  sl.innerHTML='';
+  renderSteps.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='rs-item';d.id='rs-'+i;
+    d.innerHTML=`<div class="rs-icon">○</div>${s}`;
+    sl.appendChild(d);
+  });
+  renderTimer=setInterval(()=>{
+    renderPct=Math.min(renderPct+2,100);
+    document.getElementById('r-fill').style.width=renderPct+'%';
+    const step=Math.floor(renderPct/10);
+    if(step!==renderStep&&step<renderSteps.length){
+      if(renderStep<renderSteps.length){
+        document.getElementById('rs-'+renderStep).className='rs-item done';
+        document.getElementById('rs-'+renderStep).querySelector('.rs-icon').textContent='✓';
+      }
+      renderStep=step;
+      if(renderStep<renderSteps.length){
+        document.getElementById('rs-'+renderStep).className='rs-item active';
+        document.getElementById('rs-'+renderStep).querySelector('.rs-icon').textContent='⟳';
+        document.getElementById('r-pct').textContent=renderPct+'% — '+renderSteps[renderStep]+'…';
+      }
+    }
+    if(renderPct>=100){
+      clearInterval(renderTimer);
+      document.getElementById('r-pct').textContent='100% — Complete!';
+      setTimeout(()=>{hideRender();window.location.href='export.html'},1500);
+    }
+  },80);
+}
+function hideRender(){document.getElementById('render-overlay').classList.remove('show');clearInterval(renderTimer)}
+
+// ── TOAST ──
+function toast(msg){
+  const el=document.getElementById('toastEl');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt=setTimeout(()=>el.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>

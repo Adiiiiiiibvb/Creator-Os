@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorOS — Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#050508;--deep:#0D0D18;--panel:#111120;--panel2:#161628;
+  --border:rgba(123,47,255,0.16);--vb:rgba(123,47,255,0.28);
+  --violet:#7B2FFF;--vs:rgba(123,47,255,0.1);
+  --cyan:#00D4FF;--cs:rgba(0,212,255,0.08);
+  --red:#FF3B6B;--green:#00FFB2;--amber:#FFB800;
+  --ghost:#F0F0FF;--muted:rgba(240,240,255,0.45);--faint:rgba(240,240,255,0.08);
+}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ghost);font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:rgba(123,47,255,0.3);border-radius:3px}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:60px;
+  background:rgba(5,5,8,0.8);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(240,240,255,0.06);
+}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;display:flex;align-items:center;gap:7px;letter-spacing:-.3px;text-decoration:none;color:var(--ghost)}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.logo-accent{color:var(--violet)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--ghost)}
+.nav-cta{display:flex;gap:10px}
+.btn-sm-ghost{padding:7px 18px;border:1px solid rgba(240,240,255,0.15);border-radius:7px;background:transparent;color:var(--muted);font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.btn-sm-ghost:hover{border-color:var(--violet);color:var(--ghost)}
+.btn-sm-solid{padding:7px 18px;background:var(--violet);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(123,47,255,0.3)}
+.btn-sm-solid:hover{box-shadow:0 0 32px rgba(123,47,255,0.5)}
+
+/* HERO */
+.pricing-hero{
+  padding:140px 24px 80px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.pricing-hero::before{
+  content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  width:900px;height:600px;
+  background:radial-gradient(ellipse,rgba(123,47,255,0.18) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 14px;background:var(--vs);border:1px solid var(--vb);
+  border-radius:100px;font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;
+}
+.hero-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 5px var(--cyan)}
+.pricing-hero h1{
+  font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,72px);
+  font-weight:800;letter-spacing:-3px;line-height:1.0;margin-bottom:18px;
+}
+.pricing-hero h1 .grad{
+  background:linear-gradient(135deg,var(--violet) 0%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.pricing-hero p{font-size:18px;color:var(--muted);max-width:480px;margin:0 auto 40px;line-height:1.7}
+
+/* TOGGLE */
+.billing-toggle{
+  display:inline-flex;align-items:center;gap:0;
+  background:var(--deep);border:1px solid var(--border);
+  border-radius:100px;padding:4px;margin-bottom:60px;
+}
+.toggle-opt{
+  padding:8px 24px;border-radius:100px;font-size:14px;font-weight:500;
+  cursor:pointer;transition:all .2s;color:var(--muted);border:none;background:transparent;
+  font-family:'Inter',sans-serif;
+}
+.toggle-opt.active{background:var(--violet);color:#fff;box-shadow:0 2px 16px rgba(123,47,255,0.4)}
+.save-tag{
+  display:inline-flex;align-items:center;
+  margin-left:-8px;padding:4px 10px;
+  background:rgba(0,255,178,0.1);border:1px solid rgba(0,255,178,0.2);
+  border-radius:100px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--green);
+  margin-right:-2px;
+}
+
+/* PLAN CARDS */
+.plans-wrap{
+  max-width:1100px;margin:0 auto;padding:0 24px 100px;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;align-items:start;
+}
+.plan-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:20px;padding:32px;position:relative;
+  transition:transform .25s;
+}
+.plan-card:hover{transform:translateY(-4px)}
+.plan-card.featured{
+  background:linear-gradient(160deg,rgba(123,47,255,0.12) 0%,rgba(0,212,255,0.05) 100%);
+  border-color:rgba(123,47,255,0.45);
+  box-shadow:0 0 80px rgba(123,47,255,0.15),0 0 0 1px rgba(123,47,255,0.2);
+  transform:scale(1.03);
+}
+.plan-card.featured:hover{transform:scale(1.03) translateY(-4px)}
+.featured-tag{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  padding:4px 16px;background:var(--violet);border-radius:100px;
+  font-size:11px;font-family:'JetBrains Mono',monospace;color:#fff;
+  letter-spacing:.06em;white-space:nowrap;
+  box-shadow:0 4px 16px rgba(123,47,255,0.4);
+}
+.plan-icon{font-size:28px;margin-bottom:14px;display:block}
+.plan-tier{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;
+}
+.plan-name{
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:800;
+  letter-spacing:-.5px;margin-bottom:6px;
+}
+.plan-tagline{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+
+.price-block{margin-bottom:24px}
+.price-main{
+  font-family:'Syne',sans-serif;font-size:52px;font-weight:800;
+  letter-spacing:-3px;line-height:1;
+}
+.price-main sup{font-size:24px;vertical-align:top;margin-top:10px;letter-spacing:0}
+.price-period{font-size:14px;color:var(--muted);margin-top:4px}
+.price-annual{font-size:13px;color:var(--green);margin-top:2px;display:none}
+.price-annual.show{display:block}
+.price-was{font-size:13px;color:var(--muted);text-decoration:line-through}
+
+.plan-divider{height:1px;background:var(--border);margin-bottom:24px}
+
+/* FEATURES LIST */
+.features-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.feat-item{
+  display:flex;align-items:flex-start;gap:10px;font-size:14px;
+  padding:2px 0;
+}
+.feat-item.locked{color:var(--faint)}
+.feat-check{
+  width:18px;height:18px;border-radius:5px;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+}
+.fc-yes{background:rgba(0,255,178,0.12);border:1px solid rgba(0,255,178,0.25);color:var(--green)}
+.fc-no{background:var(--faint);border:1px solid rgba(240,240,255,0.07);color:var(--faint)}
+.fc-pro{background:var(--vs);border:1px solid var(--vb);color:var(--violet)}
+.feat-label{flex:1;line-height:1.4}
+.feat-badge{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  padding:2px 6px;border-radius:100px;flex-shrink:0;
+}
+.fb-new{background:rgba(255,59,107,.1);color:var(--red);border:1px solid rgba(255,59,107,.2)}
+
+/* PLAN CTA */
+.plan-cta{
+  width:100%;padding:14px;border-radius:12px;
+  font-size:15px;font-weight:600;font-family:'Inter',sans-serif;
+  cursor:pointer;transition:all .2s;letter-spacing:-.2px;
+}
+.cta-ghost{
+  background:transparent;border:1px solid var(--border);color:var(--ghost);
+}
+.cta-ghost:hover{border-color:var(--violet);background:var(--vs)}
+.cta-filled{
+  background:var(--violet);border:none;color:#fff;
+  box-shadow:0 4px 24px rgba(123,47,255,0.35);
+}
+.cta-filled:hover{box-shadow:0 4px 40px rgba(123,47,255,0.55);transform:translateY(-1px)}
+.cta-outline-cyan{
+  background:transparent;border:1px solid rgba(0,212,255,0.3);color:var(--cyan);
+}
+.cta-outline-cyan:hover{background:var(--cs);border-color:var(--cyan)}
+
+.plan-note{text-align:center;font-size:12px;color:var(--muted);margin-top:10px}
+
+/* COMPARE TABLE */
+.compare-section{
+  max-width:1100px;margin:0 auto;padding:0 24px 100px;
+}
+.compare-title{
+  font-family:'Syne',sans-serif;font-size:32px;font-weight:800;
+  letter-spacing:-1px;text-align:center;margin-bottom:8px;
+}
+.compare-sub{font-size:16px;color:var(--muted);text-align:center;margin-bottom:48px}
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  background:var(--panel);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;
+}
+.compare-table th{
+  padding:16px 20px;font-size:13px;font-weight:600;
+  background:var(--deep);text-align:center;border-bottom:1px solid var(--border);
+}
+.compare-table th:first-child{text-align:left}
+.compare-table th.feat-col{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;
+  color:var(--muted);text-align:left;
+}
+.compare-table th.highlight-col{
+  color:var(--ghost);background:rgba(123,47,255,0.08);
+}
+.compare-table td{
+  padding:14px 20px;font-size:14px;border-bottom:1px solid rgba(240,240,255,0.04);
+  text-align:center;
+}
+.compare-table td:first-child{text-align:left;color:var(--muted)}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(123,47,255,0.03)}
+.compare-table td.highlight-col{background:rgba(123,47,255,0.04)}
+.tcheck{color:var(--green);font-size:16px}
+.tcross{color:var(--faint);font-size:16px}
+.tval{font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--cyan)}
+.section-row td{
+  background:var(--deep);font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 20px;text-align:left;
+}
+
+/* TRUST STRIP */
+.trust-strip{
+  max-width:1100px;margin:0 auto;padding:0 24px 80px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+}
+.trust-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:24px;text-align:center;
+}
+.trust-icon{font-size:28px;margin-bottom:12px}
+.trust-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.2px;margin-bottom:6px}
+.trust-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ENTERPRISE */
+.enterprise-banner{
+  max-width:1100px;margin:0 auto;padding:0 24px 80px;
+}
+.ent-card{
+  background:linear-gradient(135deg,rgba(123,47,255,0.1) 0%,rgba(0,212,255,0.06) 100%);
+  border:1px solid rgba(123,47,255,0.3);border-radius:20px;padding:48px;
+  display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center;
+}
+.ent-eyebrow{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.ent-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:10px}
+.ent-desc{font-size:15px;color:var(--muted);max-width:500px;line-height:1.7;margin-bottom:20px}
+.ent-features{display:flex;flex-wrap:wrap;gap:8px}
+.ent-feat{
+  padding:5px 12px;background:rgba(123,47,255,0.1);border:1px solid var(--vb);
+  border-radius:100px;font-size:12px;color:var(--muted);
+}
+.btn-ent{
+  padding:14px 32px;background:transparent;border:1px solid var(--cyan);
+  border-radius:10px;color:var(--cyan);font-size:15px;font-weight:600;
+  font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.btn-ent:hover{background:var(--cs);box-shadow:0 4px 24px rgba(0,212,255,0.2)}
+
+/* FAQ */
+.faq-section{max-width:720px;margin:0 auto;padding:0 24px 100px;text-align:center}
+.faq-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.faq-sub{font-size:16px;color:var(--muted);margin-bottom:48px}
+.faq-list{text-align:left}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{
+  width:100%;background:transparent;border:none;color:var(--ghost);
+  font-size:16px;font-family:'Inter',sans-serif;font-weight:500;
+  text-align:left;padding:20px 0;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+}
+.faq-q:hover{color:var(--cyan)}
+.faq-toggle{color:var(--muted);font-size:20px;transition:transform .2s;flex-shrink:0}
+.faq-a{font-size:15px;color:var(--muted);padding-bottom:18px;display:none;line-height:1.7}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-toggle{transform:rotate(45deg);color:var(--cyan)}
+
+/* BOTTOM CTA */
+.bottom-cta{
+  margin:0 24px 80px;max-width:1052px;margin-left:auto;margin-right:auto;
+  background:linear-gradient(135deg,rgba(123,47,255,0.18) 0%,rgba(0,212,255,0.08) 100%);
+  border:1px solid rgba(123,47,255,0.3);border-radius:24px;
+  padding:64px;text-align:center;position:relative;overflow:hidden;margin-bottom:80px;
+}
+.bottom-cta::before{
+  content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);
+  width:600px;height:400px;
+  background:radial-gradient(ellipse,rgba(123,47,255,0.2) 0%,transparent 65%);
+  pointer-events:none;
+}
+.bottom-cta h2{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,44px);font-weight:800;letter-spacing:-1.5px;margin-bottom:14px;position:relative}
+.bottom-cta p{font-size:17px;color:var(--muted);margin-bottom:32px;position:relative}
+.cta-btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn-cta-xl{
+  padding:14px 36px;background:var(--violet);border:none;border-radius:10px;
+  color:#fff;font-size:16px;font-weight:700;font-family:'Inter',sans-serif;
+  cursor:pointer;transition:all .25s;box-shadow:0 4px 32px rgba(123,47,255,0.4);
+  letter-spacing:-.2px;
+}
+.btn-cta-xl:hover{transform:translateY(-2px);box-shadow:0 6px 48px rgba(123,47,255,0.6)}
+.btn-cta-outline{
+  padding:14px 32px;background:transparent;border:1px solid rgba(240,240,255,0.2);
+  border-radius:10px;color:var(--ghost);font-size:16px;font-family:'Inter',sans-serif;
+  cursor:pointer;transition:all .2s;
+}
+.btn-cta-outline:hover{border-color:rgba(240,240,255,0.4)}
+
+footer{
+  border-top:1px solid var(--border);padding:32px 48px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--ghost)}
+
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  .plans-wrap{grid-template-columns:1fr;max-width:480px}
+  .plan-card.featured{transform:none}
+  .plan-card.featured:hover{transform:translateY(-4px)}
+  .trust-strip{grid-template-columns:1fr 1fr}
+  .ent-card{grid-template-columns:1fr}
+  .compare-table{font-size:12px}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+@media(max-width:600px){
+  .trust-strip{grid-template-columns:1fr}
+  .billing-toggle{flex-direction:column;border-radius:12px}
+  .bottom-cta{padding:36px 24px}
+  footer{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <div class="logo-dot"></div>
+    Creator<span class="logo-accent">OS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#workflow">How It Works</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">FAQ</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="btn-sm-ghost">Sign In</button>
+    <button class="btn-sm-solid" onclick="window.location.href='onboarding.html'">Start Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="pricing-hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>Simple, Creator-First Pricing
+  </div>
+  <h1>Pay for what you <span class="grad">actually create.</span></h1>
+  <p>Start free. No credit card. Upgrade when your channel demands it. Cancel anytime with two clicks.</p>
+
+  <div class="billing-toggle">
+    <button class="toggle-opt active" id="toggle-monthly" onclick="setBilling('monthly')">Monthly</button>
+    <button class="toggle-opt" id="toggle-annual" onclick="setBilling('annual')">
+      Annual <span class="save-tag">Save 30%</span>
+    </button>
+  </div>
+</section>
+
+<!-- PLAN CARDS -->
+<div class="plans-wrap">
+
+  <!-- FREE -->
+  <div class="plan-card">
+    <span class="plan-icon">⚡</span>
+    <div class="plan-tier">Free Forever</div>
+    <div class="plan-name">Starter</div>
+    <div class="plan-tagline">Try every feature. Export when you're ready to go paid.</div>
+    <div class="price-block">
+      <div class="price-main">$0</div>
+      <div class="price-period">forever · no card needed</div>
+    </div>
+    <div class="plan-divider"></div>
+    <ul class="features-list">
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">3 video projects / month</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Script Studio — basic (3 styles)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Scene Creator (5 scenes)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Hook Generator</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">SEO Studio (basic)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">1-minute video export</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Watermarked 720p</div>
+      </li>
+      <li class="feat-item locked">
+        <div class="feat-check fc-no">—</div>
+        <div class="feat-label">Voice Studio</div>
+      </li>
+      <li class="feat-item locked">
+        <div class="feat-check fc-no">—</div>
+        <div class="feat-label">Thumbnail AI</div>
+      </li>
+      <li class="feat-item locked">
+        <div class="feat-check fc-no">—</div>
+        <div class="feat-label">Viral Blueprint AI</div>
+      </li>
+      <li class="feat-item locked">
+        <div class="feat-check fc-no">—</div>
+        <div class="feat-label">Auto Editor AI</div>
+      </li>
+    </ul>
+    <button class="plan-cta cta-ghost" onclick="window.location.href='onboarding.html'">Start for Free</button>
+    <div class="plan-note">No credit card · No time limit</div>
+  </div>
+
+  <!-- CREATOR PRO (featured) -->
+  <div class="plan-card featured">
+    <div class="featured-tag">MOST POPULAR</div>
+    <span class="plan-icon">🚀</span>
+    <div class="plan-tier">Creator Pro</div>
+    <div class="plan-name">Pro</div>
+    <div class="plan-tagline">Everything you need to run a serious YouTube channel.</div>
+    <div class="price-block">
+      <div class="price-main" id="pro-price"><sup>$</sup>19</div>
+      <div class="price-period" id="pro-period">per month · billed monthly</div>
+      <div class="price-annual" id="pro-annual">= $13.30/mo · $159.60/year total</div>
+    </div>
+    <div class="plan-divider"></div>
+    <ul class="features-list">
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Unlimited projects</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Script Studio — all 12 styles</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Full Scene Creator (unlimited)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Voice Studio — EN + HI + Hinglish</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Auto Editor AI</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Thumbnail AI (A/B variants)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Viral Blueprint AI</div>
+        <span class="feat-badge fb-new">NEW</span>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Full SEO Studio + checklist</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Shorts Creator Mode</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">1080p export · no watermark</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Up to 20-min videos</div>
+      </li>
+    </ul>
+    <button class="plan-cta cta-filled" onclick="window.location.href='onboarding.html'">Start Creator Pro →</button>
+    <div class="plan-note">14-day money-back guarantee</div>
+  </div>
+
+  <!-- STUDIO -->
+  <div class="plan-card">
+    <span class="plan-icon">🏢</span>
+    <div class="plan-tier">Studio</div>
+    <div class="plan-name">Studio</div>
+    <div class="plan-tagline">For full-time creators, agencies, and multi-channel operators.</div>
+    <div class="price-block">
+      <div class="price-main" id="studio-price"><sup>$</sup>49</div>
+      <div class="price-period" id="studio-period">per month · billed monthly</div>
+      <div class="price-annual" id="studio-annual">= $34.30/mo · $411.60/year total</div>
+    </div>
+    <div class="plan-divider"></div>
+    <ul class="features-list">
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Everything in Creator Pro</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Unlimited export length</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">4K export quality</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Character Studio + memory lock</div>
+        <span class="feat-badge fb-new">NEW</span>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Content Planner + trend alerts</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Team collaboration (3 seats)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Priority render queue</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Brand voice memory</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">White-label exports</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-pro">β</div>
+        <div class="feat-label">API access (beta)</div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-check fc-yes">✓</div>
+        <div class="feat-label">Priority support + onboarding call</div>
+      </li>
+    </ul>
+    <button class="plan-cta cta-outline-cyan" onclick="window.location.href='onboarding.html'">Get Studio →</button>
+    <div class="plan-note">14-day money-back guarantee</div>
+  </div>
+
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-card">
+    <div class="trust-icon">🛡️</div>
+    <div class="trust-title">14-Day Guarantee</div>
+    <div class="trust-desc">Not happy? Get a full refund within 14 days. No questions, no friction.</div>
+  </div>
+  <div class="trust-card">
+    <div class="trust-icon">🔓</div>
+    <div class="trust-title">Cancel Anytime</div>
+    <div class="trust-desc">No contracts, no lock-in. Cancel in your settings in under 30 seconds.</div>
+  </div>
+  <div class="trust-card">
+    <div class="trust-icon">🛡️</div>
+    <div class="trust-title">Copyright Safe</div>
+    <div class="trust-desc">Every output is original. The AI transforms — it never copies or reproduces.</div>
+  </div>
+  <div class="trust-card">
+    <div class="trust-icon">🔒</div>
+    <div class="trust-title">Your Content, Your IP</div>
+    <div class="trust-desc">You own 100% of everything you generate. We never claim your videos.</div>
+  </div>
+</div>
+
+<!-- COMPARE TABLE -->
+<div class="compare-section">
+  <div class="compare-title">Full Feature Comparison</div>
+  <div class="compare-sub">See exactly what's included in every plan.</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th class="feat-col">Feature</th>
+        <th>Starter</th>
+        <th class="highlight-col">Creator Pro</th>
+        <th>Studio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="section-row"><td colspan="4">Creation Pipeline</td></tr>
+      <tr>
+        <td>Script Studio styles</td>
+        <td><span class="tval">3 styles</span></td>
+        <td class="highlight-col"><span class="tval">12 styles</span></td>
+        <td><span class="tval">12 + custom</span></td>
+      </tr>
+      <tr>
+        <td>Scene Creator (max scenes)</td>
+        <td><span class="tval">5 scenes</span></td>
+        <td class="highlight-col"><span class="tval">Unlimited</span></td>
+        <td><span class="tval">Unlimited</span></td>
+      </tr>
+      <tr>
+        <td>Hook Generator</td>
+        <td><span class="tcheck">✓</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Voice Studio (EN)</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Voice Studio (Hindi / Hinglish)</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Prompt Generator</td>
+        <td><span class="tcheck">✓</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+
+      <tr class="section-row"><td colspan="4">AI Tools</td></tr>
+      <tr>
+        <td>Viral Blueprint AI</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Auto Editor AI</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Thumbnail AI (A/B variants)</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>SEO Studio</td>
+        <td><span class="tval">Basic</span></td>
+        <td class="highlight-col"><span class="tval">Full + checklist</span></td>
+        <td><span class="tval">Full + trends</span></td>
+      </tr>
+      <tr>
+        <td>Shorts Creator Mode</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcheck">✓</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Character Studio</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcross">—</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Content Planner</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tval">Basic</span></td>
+        <td><span class="tval">+ Trend alerts</span></td>
+      </tr>
+      <tr>
+        <td>Brand Voice Memory</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcross">—</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+
+      <tr class="section-row"><td colspan="4">Export & Quality</td></tr>
+      <tr>
+        <td>Max video length</td>
+        <td><span class="tval">1 minute</span></td>
+        <td class="highlight-col"><span class="tval">20 minutes</span></td>
+        <td><span class="tval">Unlimited</span></td>
+      </tr>
+      <tr>
+        <td>Export quality</td>
+        <td><span class="tval">720p + watermark</span></td>
+        <td class="highlight-col"><span class="tval">1080p · no watermark</span></td>
+        <td><span class="tval">4K · no watermark</span></td>
+      </tr>
+      <tr>
+        <td>Render queue priority</td>
+        <td><span class="tval">Standard</span></td>
+        <td class="highlight-col"><span class="tval">Standard</span></td>
+        <td><span class="tval">Priority</span></td>
+      </tr>
+      <tr>
+        <td>White-label exports</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcross">—</span></td>
+        <td><span class="tcheck">✓</span></td>
+      </tr>
+      <tr>
+        <td>Export file formats</td>
+        <td><span class="tval">MP4</span></td>
+        <td class="highlight-col"><span class="tval">MP4 · WebM</span></td>
+        <td><span class="tval">MP4 · WebM · MOV</span></td>
+      </tr>
+
+      <tr class="section-row"><td colspan="4">Account & Team</td></tr>
+      <tr>
+        <td>Projects per month</td>
+        <td><span class="tval">3</span></td>
+        <td class="highlight-col"><span class="tval">Unlimited</span></td>
+        <td><span class="tval">Unlimited</span></td>
+      </tr>
+      <tr>
+        <td>Team seats</td>
+        <td><span class="tval">1</span></td>
+        <td class="highlight-col"><span class="tval">1</span></td>
+        <td><span class="tval">3 seats</span></td>
+      </tr>
+      <tr>
+        <td>API access</td>
+        <td><span class="tcross">—</span></td>
+        <td class="highlight-col"><span class="tcross">—</span></td>
+        <td><span class="tval">Beta access</span></td>
+      </tr>
+      <tr>
+        <td>Support</td>
+        <td><span class="tval">Community</span></td>
+        <td class="highlight-col"><span class="tval">Email</span></td>
+        <td><span class="tval">Priority + call</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ENTERPRISE BANNER -->
+<div class="enterprise-banner">
+  <div class="ent-card">
+    <div>
+      <div class="ent-eyebrow">Enterprise & Agencies</div>
+      <div class="ent-title">Running multiple channels?<br>Let's build something custom.</div>
+      <p class="ent-desc">Custom voice cloning, dedicated GPU rendering, bulk video generation, SSO, SLA guarantees, agency dashboard, and white-label everything.</p>
+      <div class="ent-features">
+        <span class="ent-feat">Custom voice cloning</span>
+        <span class="ent-feat">Bulk generation</span>
+        <span class="ent-feat">Dedicated GPU</span>
+        <span class="ent-feat">Agency dashboard</span>
+        <span class="ent-feat">SSO / SAML</span>
+        <span class="ent-feat">SLA rendering</span>
+        <span class="ent-feat">Unlimited team seats</span>
+      </div>
+    </div>
+    <button class="btn-ent">Talk to Sales →</button>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-title">Pricing FAQ</div>
+  <div class="faq-sub">Still have questions? Here are the most common ones.</div>
+  <div class="faq-list">
+    <div class="faq-item open">
+      <button class="faq-q">What does the free plan actually give me? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">The free plan lets you use Script Studio (3 styles), Scene Creator (5 scenes), Hook Generator, and basic SEO Studio without paying anything. You can export 1-minute watermarked videos. It's fully functional for exploring the platform — not a fake demo.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I try Creator Pro before paying? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Yes. We offer a 14-day money-back guarantee on all paid plans. If you're not satisfied for any reason within 14 days of your first payment, email us and we'll refund you in full. No questions asked.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What happens to my projects if I downgrade? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">All your projects are preserved and remain accessible. You just won't be able to create new exports beyond the free plan limits. Your existing exports stay downloadable for 30 days from the time they were created.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is the annual discount applied automatically? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Yes. Switch the billing toggle above to Annual and you'll see the 30% discounted price. It's charged as one payment at the start of the year and works out to roughly 2.5 months free compared to monthly billing.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Do I own the videos I create? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">100% yes. Every script, scene, voiceover, and exported video you generate is yours. CreatorOS claims no ownership, license, or right to your content. You can publish, monetize, and distribute it however you want.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How does the credit system work? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Creator Pro and Studio plans don't use a credit system — they're flat subscriptions with unlimited generation. Only the free plan is limited to 3 projects per month. If you need extra renders on the free plan, you can purchase credit top-ups for $5 per 20 additional renders.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">When is Character Studio releasing? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Character Studio is currently in development and will launch as part of the Studio plan in Phase 2 (Q3 2026). Studio plan subscribers will get early access automatically when it ships.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <h2>Start creating today.<br>Your first video is free.</h2>
+  <p>No credit card. No time limit on the free plan. Just sign up and start.</p>
+  <div class="cta-btn-row">
+    <button class="btn-cta-xl" onclick="window.location.href='onboarding.html'">Start Free — No Card Needed</button>
+    <button class="btn-cta-outline">View Dashboard Demo</button>
+  </div>
+</div>
+
+<footer>
+  <a class="nav-logo" href="index.html">
+    <div class="logo-dot"></div>
+    Creator<span class="logo-accent">OS</span>
+  </a>
+  <ul class="footer-links">
+    <li><a href="#">Privacy Policy</a></li>
+    <li><a href="#">Terms of Service</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">Changelog</a></li>
+  </ul>
+  <div style="font-size:13px;color:var(--muted)">© 2026 CreatorOS</div>
+</footer>
+
+<script>
+// Billing toggle
+function setBilling(type) {
+  const isAnnual = type === 'annual';
+  document.getElementById('toggle-monthly').classList.toggle('active', !isAnnual);
+  document.getElementById('toggle-annual').classList.toggle('active', isAnnual);
+
+  // Pro price
+  document.getElementById('pro-price').innerHTML = isAnnual ? '<sup>$</sup>13' : '<sup>$</sup>19';
+  document.getElementById('pro-period').textContent = isAnnual ? 'per month · billed $159.60/year' : 'per month · billed monthly';
+  document.getElementById('pro-annual').classList.toggle('show', isAnnual);
+
+  // Studio price
+  document.getElementById('studio-price').innerHTML = isAnnual ? '<sup>$</sup>34' : '<sup>$</sup>49';
+  document.getElementById('studio-period').textContent = isAnnual ? 'per month · billed $411.60/year' : 'per month · billed monthly';
+  document.getElementById('studio-annual').classList.toggle('show', isAnnual);
+}
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.plan-card, .trust-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

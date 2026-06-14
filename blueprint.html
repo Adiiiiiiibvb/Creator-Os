@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorOS — Final Consolidated Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#03030A;--s1:#080812;--s2:#0D0D1A;--s3:#111120;
+  --vio:#8B5CF6;--vs:rgba(139,92,246,.1);--vb:rgba(139,92,246,.25);
+  --teal:#06B6D4;--ts:rgba(6,182,212,.08);
+  --org:#F97316;--grn:#10B981;--gs:rgba(16,185,129,.1);
+  --rose:#F43F5E;--amb:#F59E0B;
+  --txt:#EEEEFF;--muted:rgba(238,238,255,.55);--faint:rgba(238,238,255,.08);
+  --br:rgba(139,92,246,.15);--br2:rgba(238,238,255,.07);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;line-height:1.6}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+
+/* ── FIXED TOPBAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+  background:rgba(3,3,10,.92);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--br2);
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;display:flex;align-items:center;gap:8px;letter-spacing:-.3px}
+.ld{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.4}}
+.lv{color:var(--vio)}
+.doc-badge{padding:4px 14px;background:var(--gs);border:1px solid rgba(16,185,129,.25);border-radius:100px;font-size:11px;color:var(--grn);font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+.topbar-r{display:flex;gap:8px;align-items:center}
+.btn-sm{padding:6px 16px;border-radius:7px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.bv{background:var(--vio);border:none;color:#fff;box-shadow:0 2px 12px rgba(139,92,246,.3)}
+.bv:hover{box-shadow:0 2px 20px rgba(139,92,246,.5)}
+.bg{background:transparent;border:1px solid var(--br2);color:var(--muted)}.bg:hover{border-color:var(--vio);color:var(--txt)}
+
+/* ── SIDEBAR NAV ── */
+.page-layout{display:flex;padding-top:56px}
+.sidenav{
+  width:240px;flex-shrink:0;
+  position:fixed;top:56px;bottom:0;left:0;
+  background:var(--s1);border-right:1px solid var(--br2);
+  overflow-y:auto;padding:20px 12px;
+}
+.sidenav::-webkit-scrollbar{width:3px}
+.sn-section{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;padding:10px 8px 4px;margin-top:8px}
+.sn-item{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;
+  border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);
+  text-decoration:none;transition:all .12s;margin-bottom:1px;
+}
+.sn-item:hover{background:var(--vs);color:var(--txt)}
+.sn-item.active{background:var(--vs);border:1px solid var(--vb);color:var(--txt)}
+.sn-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--vio);min-width:18px;flex-shrink:0}
+.sn-divider{height:1px;background:var(--br2);margin:8px 4px}
+
+/* ── MAIN CONTENT ── */
+.main-content{
+  margin-left:240px;flex:1;
+  padding:48px 64px 100px;
+  max-width:1200px;
+}
+@media(max-width:1000px){.sidenav{display:none}.main-content{margin-left:0;padding:32px 24px 80px}}
+
+/* ── COVER PAGE ── */
+.cover{
+  min-height:80vh;display:flex;flex-direction:column;
+  justify-content:center;padding:60px 0 80px;
+  position:relative;border-bottom:1px solid var(--br2);margin-bottom:80px;
+}
+.cover::after{
+  content:'';position:absolute;top:0;right:-64px;
+  width:600px;height:500px;
+  background:radial-gradient(ellipse,rgba(139,92,246,.15) 0%,transparent 65%);
+  pointer-events:none;
+}
+.cover-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 14px;background:var(--vs);border:1px solid var(--vb);
+  border-radius:100px;font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--vio);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;width:fit-content;
+}
+.cover h1{
+  font-family:'Syne',sans-serif;font-size:clamp(40px,6vw,72px);
+  font-weight:800;letter-spacing:-3px;line-height:1.0;margin-bottom:18px;
+}
+.cover h1 span{
+  background:linear-gradient(135deg,var(--vio),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.cover-sub{font-size:18px;color:var(--muted);max-width:580px;margin-bottom:36px;line-height:1.7}
+.cover-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:48px}
+.cm-pill{
+  padding:5px 14px;border-radius:100px;font-size:12px;
+  font-family:'JetBrains Mono',monospace;
+}
+.cmp-grn{background:var(--gs);border:1px solid rgba(16,185,129,.25);color:var(--grn)}
+.cmp-vio{background:var(--vs);border:1px solid var(--vb);color:var(--vio)}
+.cmp-org{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);color:var(--org)}
+.cmp-teal{background:var(--ts);border:1px solid rgba(6,182,212,.25);color:var(--teal)}
+.artifact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.artifact-card{
+  background:var(--s2);border:1px solid var(--br2);border-radius:12px;
+  padding:14px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:all .15s;text-decoration:none;color:var(--txt);
+}
+.artifact-card:hover{border-color:var(--vb);background:var(--vs)}
+.ac-icon{font-size:18px;flex-shrink:0}
+.ac-info{}
+.ac-name{font-size:13px;font-weight:600;margin-bottom:1px}
+.ac-type{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.ac-status{font-size:10px;padding:1px 7px;border-radius:100px;background:var(--gs);border:1px solid rgba(16,185,129,.2);color:var(--grn);margin-top:3px;display:inline-block}
+
+/* ── SECTION STYLES ── */
+.section{margin-bottom:80px;scroll-margin-top:80px}
+.section-id{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  color:var(--vio);letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.snum{
+  width:22px;height:22px;border-radius:6px;
+  background:var(--vs);border:1px solid var(--vb);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--vio);
+}
+.section h2{
+  font-family:'Syne',sans-serif;font-size:clamp(26px,3.5vw,40px);
+  font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px;
+}
+.section-sub{font-size:16px;color:var(--muted);max-width:580px;line-height:1.7;margin-bottom:32px}
+.section-divider{height:1px;background:var(--br2);margin:80px 0}
+
+/* ── CARDS ── */
+.card{background:var(--s2);border:1px solid var(--br2);border-radius:16px;padding:24px;margin-bottom:14px}
+.card.hl{border-color:var(--br)}
+.card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.3px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.ct-icon{font-size:18px}
+
+/* ── TABLES ── */
+.bp-table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:20px}
+.bp-table th{
+  padding:10px 16px;font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--muted);letter-spacing:.07em;text-transform:uppercase;
+  text-align:left;border-bottom:1px solid var(--br2);background:var(--s2);
+}
+.bp-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--faint);vertical-align:top}
+.bp-table tr:last-child td{border-bottom:none}
+.bp-table tr:hover td{background:rgba(139,92,246,.02)}
+.bp-table th:first-child{border-radius:10px 0 0 0}
+.bp-table th:last-child{border-radius:0 10px 0 0}
+
+/* ── CODE BLOCKS ── */
+.code-block{
+  background:rgba(3,3,10,.8);border:1px solid var(--br2);border-radius:12px;
+  padding:20px;font-family:'JetBrains Mono',monospace;font-size:12px;
+  line-height:1.8;overflow-x:auto;margin-bottom:16px;
+  color:var(--muted);
+}
+.code-block .k{color:var(--vio)}
+.code-block .s{color:var(--grn)}
+.code-block .c{color:var(--teal)}
+.code-block .n{color:var(--org)}
+.code-block .cm{color:rgba(238,238,255,.25);font-style:italic}
+
+/* ── PILLS / BADGES ── */
+.pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:100px;white-space:nowrap}
+.p-grn{background:var(--gs);color:var(--grn);border:1px solid rgba(16,185,129,.2)}
+.p-vio{background:var(--vs);color:var(--vio);border:1px solid var(--vb)}
+.p-teal{background:var(--ts);color:var(--teal);border:1px solid rgba(6,182,212,.2)}
+.p-org{background:rgba(249,115,22,.08);color:var(--org);border:1px solid rgba(249,115,22,.2)}
+.p-rose{background:rgba(244,63,94,.08);color:var(--rose);border:1px solid rgba(244,63,94,.2)}
+.p-amb{background:rgba(245,158,11,.08);color:var(--amb);border:1px solid rgba(245,158,11,.2)}
+
+/* ── FLOW DIAGRAMS ── */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:20px}
+.flow-step{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 16px;background:var(--s2);border:1px solid var(--br2);
+  border-radius:12px;min-width:110px;text-align:center;cursor:default;
+  transition:all .15s;
+}
+.flow-step:hover{border-color:var(--vb);background:var(--vs)}
+.flow-step.highlight{border-color:var(--vio);background:var(--vs)}
+.fs-icon{font-size:22px}
+.fs-label{font-size:11px;font-weight:600}
+.fs-sub{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.flow-arrow{color:var(--faint);font-size:18px;padding:0 4px;flex-shrink:0}
+
+/* ── GRID LAYOUTS ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:800px){.two-col,.three-col,.four-col{grid-template-columns:1fr}}
+
+/* ── COMPONENT SHOWCASE ── */
+.comp-showcase{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.comp-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.comp-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);min-width:100px;flex-shrink:0}
+
+/* LIVE BUTTONS */
+.btn-primary-live{padding:11px 28px;background:var(--org);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(249,115,22,.35);letter-spacing:-.2px}
+.btn-violet-live{padding:11px 28px;background:var(--vio);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(139,92,246,.3)}
+.btn-ghost-live{padding:10px 24px;background:transparent;border:1px solid var(--br2);border-radius:10px;color:var(--muted);font-size:14px;font-family:'Inter',sans-serif;cursor:pointer}
+.btn-teal-live{padding:10px 24px;background:transparent;border:1px solid rgba(6,182,212,.3);border-radius:10px;color:var(--teal);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer}
+.btn-danger-live{padding:9px 20px;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.25);border-radius:8px;color:var(--rose);font-size:13px;font-family:'Inter',sans-serif;cursor:pointer}
+
+/* COLOR SWATCHES */
+.color-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.swatch{
+  width:80px;text-align:center;
+}
+.sw-color{width:80px;height:56px;border-radius:10px;margin-bottom:6px;border:1px solid rgba(255,255,255,.08)}
+.sw-name{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
+.sw-hex{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--faint)}
+
+/* TYPE SCALE */
+.type-row{padding:12px 0;border-bottom:1px solid var(--faint);display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+.type-row:last-child{border-bottom:none}
+.type-meta{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);min-width:140px;flex-shrink:0}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.rm-phase{background:var(--s2);border:1px solid var(--br2);border-radius:14px;padding:18px;position:relative}
+.rm-phase::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.rm-mvp::before{background:linear-gradient(90deg,var(--grn),var(--teal))}
+.rm-p2::before{background:linear-gradient(90deg,var(--vio),var(--teal))}
+.rm-p3::before{background:linear-gradient(90deg,var(--org),var(--vio))}
+.rm-ent::before{background:linear-gradient(90deg,var(--rose),var(--org))}
+.rm-phase-label{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.rm-mvp .rm-phase-label{color:var(--grn)}
+.rm-p2 .rm-phase-label{color:var(--vio)}
+.rm-p3 .rm-phase-label{color:var(--org)}
+.rm-ent .rm-phase-label{color:var(--rose)}
+.rm-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.2px;margin-bottom:4px}
+.rm-timeline{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:12px}
+.rm-items{display:flex;flex-direction:column;gap:5px}
+.rm-item{font-size:12px;color:var(--muted);display:flex;align-items:flex-start;gap:6px}
+.rm-item::before{content:'→';color:var(--vio);flex-shrink:0}
+
+/* CHECKLIST */
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.cl-section{background:var(--s2);border:1px solid var(--br2);border-radius:12px;padding:16px}
+.cl-sec-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cl-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--faint);font-size:12px}
+.cl-item:last-child{border-bottom:none}
+.cl-ic{flex-shrink:0;margin-top:1px}
+.cl-item.done .cl-ic::after{content:'✓';color:var(--grn)}
+.cl-item.todo .cl-ic::after{content:'○';color:var(--muted)}
+.cl-item.warn .cl-ic::after{content:'!';color:var(--amb)}
+
+/* SPRINT TIMELINE */
+.sprint-timeline{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.sprint-week{display:flex;align-items:flex-start;gap:16px}
+.sw-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--vio);
+  min-width:64px;flex-shrink:0;padding-top:10px;
+}
+.sw-bar{flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:12px 16px}
+.sw-title{font-size:13px;font-weight:600;margin-bottom:6px}
+.sw-tasks{display:flex;flex-wrap:wrap;gap:6px}
+.sw-task{font-size:11px;padding:2px 8px;background:var(--vs);border:1px solid var(--vb);border-radius:6px;color:var(--vio);font-family:'JetBrains Mono',monospace}
+.sw-task.eng{background:rgba(6,182,212,.06);border-color:rgba(6,182,212,.2);color:var(--teal)}
+.sw-task.pay{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.2);color:var(--grn)}
+.sw-task.qa{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2);color:var(--amb)}
+
+/* API BLOCK */
+.api-endpoint{
+  display:flex;align-items:center;gap:10px;padding:8px 14px;
+  background:var(--s1);border:1px solid var(--br2);border-radius:8px;
+  margin-bottom:6px;font-family:'JetBrains Mono',monospace;font-size:12px;
+}
+.api-method{
+  padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;
+  min-width:44px;text-align:center;
+}
+.m-post{background:rgba(249,115,22,.15);color:var(--org)}
+.m-get{background:rgba(16,185,129,.1);color:var(--grn)}
+.m-patch{background:rgba(139,92,246,.12);color:var(--vio)}
+.m-delete{background:rgba(244,63,94,.08);color:var(--rose)}
+.api-path{color:var(--txt);flex:1}
+.api-desc{color:var(--muted);font-size:11px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--s3);border:1px solid var(--br);border-radius:10px;padding:12px 18px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.36,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* PROGRESS INDICATOR */
+.reading-bar{position:fixed;top:56px;left:0;right:0;height:2px;background:var(--faint);z-index:99}
+.reading-fill{height:100%;background:linear-gradient(90deg,var(--vio),var(--teal));width:0%;transition:width .1s linear}
+
+/* PRINT / EXPORT */
+@media print{
+  .topbar,.sidenav,.reading-bar{display:none!important}
+  .main-content{margin-left:0;padding:20px}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+
+<!-- READING PROGRESS -->
+<div class="reading-bar"><div class="reading-fill" id="reading-fill"></div></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo"><div class="ld"></div>Creator<span class="lv">OS</span></div>
+  <div class="doc-badge">FINAL CONSOLIDATED BLUEPRINT v1.0</div>
+  <div class="topbar-r">
+    <a href="dashboard.html" class="btn-sm bg">← Dashboard</a>
+    <button class="btn-sm bv" onclick="window.print()">⬇ Export PDF</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="page-layout">
+
+  <!-- SIDENAV -->
+  <nav class="sidenav">
+    <div class="sn-section">Blueprint</div>
+    <a href="#cover" class="sn-item active"><div class="sn-num">0</div>Cover & Artifacts</a>
+    <div class="sn-divider"></div>
+    <div class="sn-section">Sections</div>
+    <a href="#pages" class="sn-item"><div class="sn-num">1</div>Complete Page Structure</a>
+    <a href="#dashboard" class="sn-item"><div class="sn-num">2</div>Dashboard Layouts</a>
+    <a href="#components" class="sn-item"><div class="sn-num">3</div>UI Components</a>
+    <a href="#features" class="sn-item"><div class="sn-num">4</div>Feature Specifications</a>
+    <a href="#flows" class="sn-item"><div class="sn-num">5</div>User Flows</a>
+    <a href="#architecture" class="sn-item"><div class="sn-num">6</div>Technical Architecture</a>
+    <a href="#mvp" class="sn-item"><div class="sn-num">7</div>MVP Roadmap</a>
+    <a href="#v2v3" class="sn-item"><div class="sn-num">8</div>V2 / V3 Roadmap</a>
+    <a href="#checklist" class="sn-item"><div class="sn-num">9</div>Implementation Checklist</a>
+    <div class="sn-divider"></div>
+    <div class="sn-section">Artifacts</div>
+    <a href="dashboard.html" class="sn-item"><div class="sn-num">→</div>Dashboard</a>
+    <a href="ai-studio.html" class="sn-item"><div class="sn-num">→</div>AI Studio (Live)</a>
+    <a href="admin.html" class="sn-item"><div class="sn-num">→</div>Admin Panel</a>
+    <a href="editor.html" class="sn-item"><div class="sn-num">→</div>Video Editor</a>
+    <a href="shorts.html" class="sn-item"><div class="sn-num">→</div>Shorts Creator</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- ══ COVER ══ -->
+    <section class="section" id="cover">
+      <div class="cover">
+        <div class="cover-eyebrow"><div class="ld" style="background:var(--vio);box-shadow:0 0 6px var(--vio)"></div>Final Consolidated Blueprint</div>
+        <h1>CreatorOS<br><span>Complete Product Bible</span></h1>
+        <p class="cover-sub">The definitive designer and developer handoff document. Consolidates all vision documents, architecture specs, PRD, and interactive prototypes into one authoritative source of truth.</p>
+        <div class="cover-meta">
+          <span class="cm-pill cmp-grn">Version 1.0 Final</span>
+          <span class="cm-pill cmp-vio">14 Artifacts Built</span>
+          <span class="cm-pill cmp-org">13 Core Modules</span>
+          <span class="cm-pill cmp-teal">PRD-Locked</span>
+        </div>
+
+        <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">All Deliverables — Status: Complete</div>
+        <div class="artifact-grid">
+          <a href="vision3-platform.html" class="artifact-card"><div class="ac-icon">🌐</div><div class="ac-info"><div class="ac-name">Landing Page</div><div class="ac-type">vision3-platform.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="dashboard.html" class="artifact-card"><div class="ac-icon">⊞</div><div class="ac-info"><div class="ac-name">Dashboard</div><div class="ac-type">dashboard.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="onboarding.html" class="artifact-card"><div class="ac-icon">🎬</div><div class="ac-info"><div class="ac-name">Onboarding Flow</div><div class="ac-type">onboarding.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="pricing.html" class="artifact-card"><div class="ac-icon">💳</div><div class="ac-info"><div class="ac-name">Pricing Page</div><div class="ac-type">pricing.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="project.html" class="artifact-card"><div class="ac-icon">📋</div><div class="ac-info"><div class="ac-name">Project Workspace</div><div class="ac-type">project.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="editor.html" class="artifact-card"><div class="ac-icon">⚙️</div><div class="ac-info"><div class="ac-name">Auto Editor</div><div class="ac-type">editor.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="shorts.html" class="artifact-card"><div class="ac-icon">📱</div><div class="ac-info"><div class="ac-name">Shorts Creator</div><div class="ac-type">shorts.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="studio.html" class="artifact-card"><div class="ac-icon">👤</div><div class="ac-info"><div class="ac-name">Studio Tools</div><div class="ac-type">studio.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="admin.html" class="artifact-card"><div class="ac-icon">📊</div><div class="ac-info"><div class="ac-name">Admin Dashboard</div><div class="ac-type">admin.html</div><div class="ac-status">Complete</div></div></a>
+          <a href="ai-studio.html" class="artifact-card"><div class="ac-icon">🤖</div><div class="ac-info"><div class="ac-name">Live AI Studio</div><div class="ac-type">ai-studio.html</div><div class="ac-status">Live Claude API</div></div></a>
+          <a href="CreatorOS-PRD-Final.md" class="artifact-card"><div class="ac-icon">📄</div><div class="ac-info"><div class="ac-name">Final PRD</div><div class="ac-type">CreatorOS-PRD-Final.md</div><div class="ac-status">Complete</div></div></a>
+          <a href="vision3-architecture.md" class="artifact-card"><div class="ac-icon">🏗️</div><div class="ac-info"><div class="ac-name">Architecture Spec</div><div class="ac-type">vision3-architecture.md</div><div class="ac-status">Complete</div></div></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SECTION 1: PAGE STRUCTURE ══ -->
+    <section class="section" id="pages">
+      <div class="section-id"><div class="snum">1</div>Complete Page Structure</div>
+      <h2>Every route.<br>Every screen.</h2>
+      <p class="section-sub">Complete sitemap from public landing to internal admin, with route, purpose, auth requirement, and artifact status for every page.</p>
+
+      <div class="card hl">
+        <div class="card-title"><span class="ct-icon">🌐</span>Public Pages — No Auth Required</div>
+        <table class="bp-table">
+          <thead><tr><th>Route</th><th>Page Name</th><th>Purpose</th><th>Artifact</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><code style="color:var(--teal)">/</code></td><td>Landing Page</td><td>Explain value, drive signups, pipeline demo</td><td>vision3-platform.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/pricing</code></td><td>Pricing</td><td>Plan comparison, billing toggle, upgrade CTA</td><td>pricing.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/blog</code></td><td>Content Blog</td><td>SEO content marketing, organic acquisition</td><td>—</td><td><span class="pill p-amb">Phase 2</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/changelog</code></td><td>Changelog</td><td>Feature updates, trust building</td><td>—</td><td><span class="pill p-amb">Phase 2</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">🔐</span>Auth Pages</div>
+        <table class="bp-table">
+          <thead><tr><th>Route</th><th>Page Name</th><th>Purpose</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><code style="color:var(--teal)">/auth/login</code></td><td>Sign In</td><td>Email + Google OAuth, forgot password</td><td><span class="pill p-vio">MVP</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/auth/register</code></td><td>Sign Up</td><td>New account creation</td><td><span class="pill p-vio">MVP</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/auth/onboarding</code></td><td>Onboarding</td><td>6-screen setup: niche, style, language, goal, plan</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/auth/reset</code></td><td>Password Reset</td><td>Email-based reset flow</td><td><span class="pill p-vio">MVP</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">🔒</span>App Pages — Auth Required</div>
+        <table class="bp-table">
+          <thead><tr><th>Route</th><th>Page Name</th><th>Key Components</th><th>Artifact</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><code style="color:var(--teal)">/dashboard</code></td><td>Dashboard</td><td>Project list, quick actions, stats, pipeline header</td><td>dashboard.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/magic</code></td><td>Magic Mode</td><td>5-question intake → full pipeline orchestration</td><td>dashboard.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/projects/[id]</code></td><td>Project Workspace</td><td>All 7 pipeline steps in one view, autosave, versions</td><td>project.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/projects/[id]/editor</code></td><td>Auto Editor</td><td>Visual timeline, drag scenes, audio mixer, captions</td><td>editor.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/shorts</code></td><td>Shorts Creator</td><td>9:16 preview, loop endings, format picker, 60s pipeline</td><td>shorts.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/characters</code></td><td>Character Studio</td><td>Design, lock, seed, expression library</td><td>studio.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/planner</code></td><td>Content Planner</td><td>Calendar, AI ideas, trends, series builder</td><td>studio.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/ai-studio</code></td><td>Live AI Studio</td><td>Real Claude API: script, hooks, SEO, scenes, magic</td><td>ai-studio.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/settings</code></td><td>Settings</td><td>Profile, preferences, billing, notifications, danger zone</td><td>studio.html</td><td><span class="pill p-grn">Built</span></td></tr>
+            <tr><td><code style="color:var(--teal)">/admin</code></td><td>Admin Dashboard</td><td>Revenue, users, render queue, AI costs, cohorts, funnel</td><td>admin.html</td><td><span class="pill p-grn">Built</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 2: DASHBOARD LAYOUTS ══ -->
+    <section class="section" id="dashboard">
+      <div class="section-id"><div class="snum">2</div>Dashboard Layouts</div>
+      <h2>Every screen,<br>every state.</h2>
+      <p class="section-sub">Layout specifications for every major dashboard view. All use the same shell: fixed topbar + pipeline header + left sidebar + scrollable main content area.</p>
+
+      <div class="card hl">
+        <div class="card-title"><span class="ct-icon">⊞</span>Global Shell — All Authenticated Pages</div>
+        <div class="code-block">
+<span class="cm">/* Shell Layout (CSS Grid) */</span>
+<span class="k">body</span> {
+  <span class="c">height: 100vh</span>;
+  <span class="c">display: flex</span>;
+  <span class="c">flex-direction: column</span>;
+  <span class="c">overflow: hidden</span>;
+}
+
+<span class="k">.topbar</span>          { <span class="c">height: 52px</span>; z-index: 50; fixed; }
+<span class="k">.pipeline-header</span>  { <span class="c">height: 48px</span>; flex-shrink: 0; }
+<span class="k">.app-body</span>         { <span class="c">flex: 1</span>; display: flex; overflow: hidden; }
+<span class="k">.sidebar</span>          { <span class="c">width: 240px</span>; flex-shrink: 0; overflow-y: auto; }
+<span class="k">.main</span>             { <span class="c">flex: 1</span>; overflow-y: auto; padding: 24px; }
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📋</span>Dashboard Home Layout</div>
+          <div style="background:var(--s1);border-radius:10px;padding:14px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);line-height:2">
+            <div style="color:var(--teal)">← Topbar (logo + breadcrumb + save + avatar)</div>
+            <div style="color:var(--vio)">← Pipeline Steps (7 steps + arrows, horizontal scroll)</div>
+            <div style="display:flex;gap:8px;margin:4px 0">
+              <div style="background:var(--s2);border-radius:6px;padding:6px 10px;color:var(--muted);min-width:80px">Sidebar<br>240px<br>Nav items<br>Recent projects</div>
+              <div style="flex:1;background:var(--s2);border-radius:6px;padding:6px 10px;color:var(--muted)">
+                Welcome + greeting<br>
+                Quick action cards (2×2)<br>
+                Stats row (4 KPIs)<br>
+                Recent projects list (3 items)<br>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📋</span>Project Workspace Layout</div>
+          <div style="background:var(--s1);border-radius:10px;padding:14px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);line-height:2">
+            <div style="color:var(--teal)">← Topbar (project title + save badge + share + export)</div>
+            <div style="color:var(--vio)">← Pipeline Steps (done ✓ / active / waiting states)</div>
+            <div style="display:flex;gap:8px;margin:4px 0">
+              <div style="background:var(--s2);border-radius:6px;padding:6px 10px;color:var(--muted);min-width:80px">Sidebar<br>Step nav<br>Status pills<br>Health card</div>
+              <div style="flex:1;background:var(--s2);border-radius:6px;padding:6px 10px;color:var(--muted)">
+                Page header (title + actions)<br>
+                Active step content (swaps on nav)<br>
+                — Script: sections + retention tips<br>
+                — Scenes: card list + drag handles<br>
+                — Voice: selector + waveform + segs<br>
+                — SEO: fields + score ring + checklist
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">⚙️</span>Auto Editor Layout</div>
+          <div style="background:var(--s1);border-radius:10px;padding:14px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);line-height:1.8">
+            <div style="color:var(--teal)">← Topbar (project + render status + export btn)</div>
+            <div style="display:flex;gap:8px;margin:4px 0">
+              <div style="background:var(--s2);border-radius:6px;padding:6px 10px;min-width:100px">
+                Preview panel<br>400px wide<br>16:9 screen<br>Scrubber bar<br>Play controls<br>Scene settings<br>Audio settings
+              </div>
+              <div style="flex:1;background:var(--s2);border-radius:6px;padding:6px 10px;">
+                ← Toolbar (tools + zoom)<br>
+                ← Ruler (time marks)<br>
+                Scenes track (clip blocks)<br>
+                Voice track (waveform clip)<br>
+                Music track (full clip)<br>
+                Captions track (block clips)<br>
+                SFX track (point clips)<br>
+                ← Caption editor (scrollable)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📱</span>Shorts Creator Layout</div>
+          <div style="background:var(--s1);border-radius:10px;padding:14px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);line-height:1.8">
+            <div style="color:var(--org)">← Topbar (SHORTS MODE badge + render btn)</div>
+            <div style="color:var(--org)">← Hero banner (format stats: 60s, 9:16, 6 scenes)</div>
+            <div style="color:var(--org)">← Format bar (15/30/45/60s chips + hook type + topic)</div>
+            <div style="display:flex;gap:8px;margin:4px 0">
+              <div style="background:var(--s2);border-radius:6px;padding:6px 10px;flex:1">
+                Hook block (selected + alts)<br>
+                Script segments (5 beats)<br>
+                Scene strips (6 scenes)<br>
+                Loop ending selector
+              </div>
+              <div style="background:var(--s2);border-radius:6px;padding:6px 10px;min-width:80px">
+                9:16 phone<br>mock preview<br>Caption list<br>CTR scores
+              </div>
+              <div style="background:var(--s2);border-radius:6px;padding:6px 10px;min-width:80px">
+                Format settings<br>Voice settings<br>Music + SFX<br>Render panel<br>Checklist
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 3: UI COMPONENTS ══ -->
+    <section class="section" id="components">
+      <div class="section-id"><div class="snum">3</div>UI Components</div>
+      <h2>The design system.<br>Live in the browser.</h2>
+      <p class="section-sub">Every component rendered live. Tokens, typography, buttons, forms, and patterns — the complete visual language of CreatorOS.</p>
+
+      <!-- COLOR TOKENS -->
+      <div class="card hl">
+        <div class="card-title"><span class="ct-icon">🎨</span>Color Tokens — Canonical</div>
+        <div class="color-grid">
+          <div class="swatch"><div class="sw-color" style="background:#03030A"></div><div class="sw-name">--bg</div><div class="sw-hex">#03030A</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#080812"></div><div class="sw-name">--s1</div><div class="sw-hex">#080812</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#0D0D1A"></div><div class="sw-name">--s2</div><div class="sw-hex">#0D0D1A</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#111120"></div><div class="sw-name">--s3</div><div class="sw-hex">#111120</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#8B5CF6"></div><div class="sw-name">--vio</div><div class="sw-hex">#8B5CF6</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#06B6D4"></div><div class="sw-name">--teal</div><div class="sw-hex">#06B6D4</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#F97316"></div><div class="sw-name">--org</div><div class="sw-hex">#F97316</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#10B981"></div><div class="sw-name">--grn</div><div class="sw-hex">#10B981</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#F43F5E"></div><div class="sw-name">--rose</div><div class="sw-hex">#F43F5E</div></div>
+          <div class="swatch"><div class="sw-color" style="background:#F59E0B"></div><div class="sw-name">--amb</div><div class="sw-hex">#F59E0B</div></div>
+        </div>
+      </div>
+
+      <!-- TYPOGRAPHY -->
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">Aa</span>Typography Scale</div>
+        <div>
+          <div class="type-row"><div class="type-meta">Display XL · Syne 800</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(36px,5vw,60px);letter-spacing:-2px;line-height:1">Creator<span style="color:var(--vio)">OS</span></div></div>
+          <div class="type-row"><div class="type-meta">Display LG · Syne 800</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.5px">Your YouTube Studio</div></div>
+          <div class="type-row"><div class="type-meta">Display MD · Syne 700</div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(20px,2.5vw,32px);letter-spacing:-.8px">AI Script Generator</div></div>
+          <div class="type-row"><div class="type-meta">Display SM · Syne 700</div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;letter-spacing:-.4px">Voice Studio</div></div>
+          <div class="type-row"><div class="type-meta">Body LG · Inter 400</div><div style="font-size:18px;color:var(--muted)">Generate a complete script with hook, body, CTA, and retention tips.</div></div>
+          <div class="type-row"><div class="type-meta">Body MD · Inter 400</div><div style="font-size:15px;color:var(--muted)">Choose from 12 video styles across English, Hindi, and Hinglish.</div></div>
+          <div class="type-row"><div class="type-meta">Label · JetBrains Mono</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">VIDEO STYLE · STEP 02 · ENGAGEMENT SCORE</div></div>
+        </div>
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">🔘</span>Button System</div>
+        <div class="comp-showcase">
+          <div class="comp-row"><div class="comp-label">Primary (CTA)</div><button class="btn-primary-live" onclick="t('Primary clicked')">✦ Generate My Video Free</button></div>
+          <div class="comp-row"><div class="comp-label">Violet (Action)</div><button class="btn-violet-live" onclick="t('Violet clicked')">Generate Script →</button></div>
+          <div class="comp-row"><div class="comp-label">Ghost (Secondary)</div><button class="btn-ghost-live" onclick="t('Ghost clicked')">Watch Demo</button></div>
+          <div class="comp-row"><div class="comp-label">Teal (Tool)</div><button class="btn-teal-live" onclick="t('Teal clicked')">Export SRT</button></div>
+          <div class="comp-row"><div class="comp-label">Danger</div><button class="btn-danger-live" onclick="t('Danger clicked')">Delete Project</button></div>
+        </div>
+        <div style="margin-top:12px;padding:12px;background:var(--s1);border-radius:8px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">
+          Rule: Orange = conversion CTA only. Violet = primary actions. Teal = tool/utility. Ghost = secondary. Never mix Primary + Violet on same card.
+        </div>
+      </div>
+
+      <!-- STATUS PILLS -->
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">🏷️</span>Status Pills & Badges</div>
+        <div class="comp-row" style="flex-wrap:wrap;gap:8px">
+          <span class="pill p-grn">COMPLETE</span>
+          <span class="pill p-vio">IN PROGRESS</span>
+          <span class="pill p-teal">READY</span>
+          <span class="pill p-org">DRAFT</span>
+          <span class="pill p-amb">WAITING</span>
+          <span class="pill p-rose">ERROR</span>
+          <span class="pill p-grn">Creator Pro</span>
+          <span class="pill p-teal">STUDIO</span>
+          <span class="pill p-rose">FREE</span>
+          <span class="pill p-vio">LIVE AI</span>
+          <span class="pill p-org">NEW</span>
+          <span class="pill p-amb">BETA</span>
+        </div>
+      </div>
+
+      <!-- SPACING + RADIUS -->
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📐</span>Spacing Scale</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">
+            <div>4px  — micro gap (icon to label)</div>
+            <div>8px  — tight (list item internal)</div>
+            <div>12px — compact (card internal)</div>
+            <div>16px — standard (between elements)</div>
+            <div>20px — comfortable (section internal)</div>
+            <div>24px — page padding (mobile)</div>
+            <div>32px — section gap (desktop)</div>
+            <div>48px — page padding (desktop)</div>
+            <div>80px — between major sections</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🔲</span>Border Radius</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:20px;background:var(--vio);border-radius:4px"></div><span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">4px — micro</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:20px;background:var(--vio);border-radius:6px"></div><span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">6px — small (pills, tags)</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:20px;background:var(--vio);border-radius:8px"></div><span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">8px — form inputs, chips</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:20px;background:var(--vio);border-radius:10px"></div><span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">10px — buttons</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:20px;background:var(--vio);border-radius:14px"></div><span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">14px — cards</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:20px;background:var(--vio);border-radius:100px"></div><span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted)">100px — pills, toggle, avatar</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 4: FEATURE SPECIFICATIONS ══ -->
+    <section class="section" id="features">
+      <div class="section-id"><div class="snum">4</div>Feature Specifications</div>
+      <h2>13 modules.<br>Every detail.</h2>
+      <p class="section-sub">Canonical specifications for all 13 core modules — inputs, outputs, constraints, models, and plan availability. Source of truth for engineering.</p>
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">📊</span>Module Overview — All 13</div>
+        <table class="bp-table">
+          <thead><tr><th>#</th><th>Module</th><th>Model</th><th>MVP</th><th>Plans</th><th>Output Format</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Beginner Magic Mode</strong></td><td>Orchestration</td><td><span class="pill p-grn">MVP</span></td><td>All</td><td>Chains all modules</td></tr>
+            <tr><td>2</td><td><strong>AI Script Studio</strong></td><td>Claude Sonnet</td><td><span class="pill p-grn">MVP</span></td><td>All (3 styles free)</td><td>JSON structured script</td></tr>
+            <tr><td>3</td><td><strong>Hook Generator</strong></td><td>GPT-4o-mini</td><td><span class="pill p-grn">MVP</span></td><td>All</td><td>7 types × 3 variants</td></tr>
+            <tr><td>4</td><td><strong>Scene Creator AI</strong></td><td>GPT-4o-mini</td><td><span class="pill p-grn">MVP</span></td><td>All (5 scenes free)</td><td>JSON scene array</td></tr>
+            <tr><td>5</td><td><strong>Prompt Generator</strong></td><td>GPT-4o-mini</td><td><span class="pill p-grn">MVP</span></td><td>All</td><td>6 style presets</td></tr>
+            <tr><td>6</td><td><strong>Voice Studio</strong></td><td>ElevenLabs + Azure</td><td><span class="pill p-grn">MVP</span></td><td>Creator + Studio</td><td>MP3 + SRT segments</td></tr>
+            <tr><td>7</td><td><strong>Auto Editor AI</strong></td><td>FFmpeg pipeline</td><td><span class="pill p-grn">MVP</span></td><td>Creator + Studio</td><td>MP4 via BullMQ</td></tr>
+            <tr><td>8</td><td><strong>Thumbnail AI</strong></td><td>Canvas API + LLM</td><td><span class="pill p-grn">MVP</span></td><td>Creator + Studio</td><td>PNG × 3 variants</td></tr>
+            <tr><td>9</td><td><strong>YouTube SEO Studio</strong></td><td>Claude Sonnet</td><td><span class="pill p-grn">MVP</span></td><td>All (basic free)</td><td>Full SEO package JSON</td></tr>
+            <tr><td>10</td><td><strong>Viral Blueprint AI</strong></td><td>YT API + Claude</td><td><span class="pill p-amb">Phase 2</span></td><td>Creator + Studio</td><td>Analysis + brief</td></tr>
+            <tr><td>11</td><td><strong>Shorts Creator</strong></td><td>Reuses pipeline</td><td><span class="pill p-grn">MVP</span></td><td>All</td><td>1080×1920 MP4</td></tr>
+            <tr><td>12</td><td><strong>Character Studio</strong></td><td>Prompt seeds</td><td><span class="pill p-amb">Phase 2</span></td><td>Studio only</td><td>Prompt seed + expressions</td></tr>
+            <tr><td>13</td><td><strong>Content Planner</strong></td><td>GPT-4o-mini</td><td><span class="pill p-grn">MVP</span></td><td>All</td><td>Calendar + idea array</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">✍️</span>Script Studio — Full Spec</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+            <div><strong style="color:var(--txt)">Model:</strong> Claude Sonnet 4</div>
+            <div><strong style="color:var(--txt)">Styles:</strong> 12 (faceless, horror, motivational, educational, documentary, cartoon, comparison, avatar, shorts, kids, true crime, finance)</div>
+            <div><strong style="color:var(--txt)">Languages:</strong> English, Hindi, Hinglish</div>
+            <div><strong style="color:var(--txt)">Output schema:</strong> {hook, intro, body[], emotional_beats[], cta, outro, retention_tips[], engagement_score, word_count, estimated_duration}</div>
+            <div><strong style="color:var(--txt)">Validation:</strong> Hook ≤35 words, CTA present, duration within 15% of target</div>
+            <div><strong style="color:var(--txt)">Retry:</strong> Once on validation fail, then surface to user</div>
+            <div><strong style="color:var(--txt)">Warning:</strong> Factual claims in educational content flagged for verification</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">⚙️</span>Auto Editor — Full Spec</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+            <div><strong style="color:var(--txt)">Stack:</strong> FFmpeg + fluent-ffmpeg + BullMQ + Redis + R2</div>
+            <div><strong style="color:var(--txt)">Render steps:</strong> Asset validate → Ken Burns zoom → SRT → Audio mix → Concat → Captions → Grade → Watermark → H.264 encode → Upload</div>
+            <div><strong style="color:var(--txt)">Voice:</strong> -16 LUFS normalized</div>
+            <div><strong style="color:var(--txt)">Music:</strong> -24 LUFS, duck to -35 during voice</div>
+            <div><strong style="color:var(--txt)">Color grade:</strong> Contrast +5%, saturation +3%</div>
+            <div><strong style="color:var(--txt)">Targets:</strong> 60s → &lt;90s render, 8min → &lt;5min, 20min → &lt;15min</div>
+            <div><strong style="color:var(--txt)">Progress:</strong> WebSocket events every step</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 5: USER FLOWS ══ -->
+    <section class="section" id="flows">
+      <div class="section-id"><div class="snum">5</div>User Flows</div>
+      <h2>Every journey.<br>Every decision.</h2>
+      <p class="section-sub">All critical user paths mapped end-to-end. Each flow represents a conversion or retention moment.</p>
+
+      <div class="card hl">
+        <div class="card-title"><span class="ct-icon">✦</span>Flow 1: Magic Mode — Primary Acquisition (9 minutes)</div>
+        <div class="flow">
+          <div class="flow-step highlight"><div class="fs-icon">🌐</div><div class="fs-label">Landing CTA</div><div class="fs-sub">30 sec</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight"><div class="fs-icon">✦</div><div class="fs-label">5 Questions</div><div class="fs-sub">2 min</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="fs-icon">🤖</div><div class="fs-label">AI Generates</div><div class="fs-sub">3 min</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="fs-icon">👁️</div><div class="fs-label">Review</div><div class="fs-sub">2 min</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="fs-icon">⚙️</div><div class="fs-label">Render</div><div class="fs-sub">~4 min</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight"><div class="fs-icon">⬇️</div><div class="fs-label">Download</div><div class="fs-sub">First video</div></div>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-top:8px">Key metric: Time from landing CTA click to video download. Target: &lt;15 minutes. Current prototype: 9 min 22s.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">💳</span>Flow 2: Upgrade Flow — Highest Revenue Moment</div>
+        <div class="flow" style="flex-wrap:wrap">
+          <div class="flow-step"><div class="fs-icon">🚧</div><div class="fs-label">Limit Hit</div><div class="fs-sub">trigger</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="fs-icon">👁️</div><div class="fs-label">Upgrade Wall</div><div class="fs-sub">blurred preview</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight"><div class="fs-icon">💡</div><div class="fs-label">Value Show</div><div class="fs-sub">"what you get"</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="fs-icon">💳</div><div class="fs-label">Stripe Checkout</div><div class="fs-sub">pre-filled</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight"><div class="fs-icon">✓</div><div class="fs-label">Unlocked</div><div class="fs-sub">return to action</div></div>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-top:8px">Triggers: export &gt;1 min, watermark removal, Voice Studio click, 1080p click, Viral Blueprint click. Never show wall before user sees the output they want.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🎯</span>Flow 3: Onboarding (2 minutes)</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-vio">S1</span> Welcome screen → "Let's start"</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-vio">S2</span> Name + channel name (both optional)</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-vio">S3</span> Niche picker (multi-select, 9 options)</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-vio">S4</span> Video style + language</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-vio">S5</span> Goal + plan picker</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-grn">S6</span> "Studio ready" → Magic Mode CTA</div>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--faint)">Rule: Max 6 screens. Every screen skippable. Progress bar always visible.</div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🔄</span>Flow 4: Referral Viral Loop</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-org">1</span> Free user exports video (watermarked)</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-org">2</span> Viewer sees "Made with CreatorOS" watermark</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-org">3</span> Viewer clicks / searches CreatorOS</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-org">4</span> Signs up → creator gets referral credit</div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="pill p-grn">5</span> Target: 1.8 signups per active free user/mo</div>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--faint)">Also: Pro plan referral = 30% recurring commission for 12 months.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 6: TECHNICAL ARCHITECTURE ══ -->
+    <section class="section" id="architecture">
+      <div class="section-id"><div class="snum">6</div>Technical Architecture</div>
+      <h2>The full stack.<br>Every decision justified.</h2>
+      <p class="section-sub">Definitive technology decisions from the PRD. All earlier contradictions resolved.</p>
+
+      <div class="card hl">
+        <div class="card-title"><span class="ct-icon">🏗️</span>Canonical Technology Stack</div>
+        <table class="bp-table">
+          <thead><tr><th>Layer</th><th>Technology</th><th>Decision Rationale</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pill p-vio">Frontend</span></td><td>Next.js 14 (App Router) + TypeScript</td><td>SSR for SEO, RSC for performance, Edge-ready</td></tr>
+            <tr><td><span class="pill p-vio">Styling</span></td><td>Tailwind CSS + shadcn/ui + Radix</td><td>Rapid iteration, accessible primitives, unstyled base</td></tr>
+            <tr><td><span class="pill p-vio">State</span></td><td>Zustand + TanStack Query v5</td><td>Zustand: lightweight client state; TQ: server state + cache</td></tr>
+            <tr><td><span class="pill p-vio">Animation</span></td><td>Framer Motion 11</td><td>Cinematic transitions, layout animations</td></tr>
+            <tr><td><span class="pill p-teal">Backend</span></td><td>Hono.js + Node.js 20 LTS (Railway)</td><td>Edge-compatible, TypeScript-native, faster than Express</td></tr>
+            <tr><td><span class="pill p-teal">ORM</span></td><td>Drizzle ORM</td><td>Type-safe, lighter than Prisma, no shadow DB</td></tr>
+            <tr><td><span class="pill p-teal">Database</span></td><td>PostgreSQL via Supabase</td><td>Managed Postgres + Auth + Realtime in one</td></tr>
+            <tr><td><span class="pill p-teal">Cache/Queue</span></td><td>Upstash Redis + BullMQ</td><td>Serverless Redis; BullMQ for typed job queues</td></tr>
+            <tr><td><span class="pill p-teal">Auth</span></td><td>NextAuth.js v5 + Supabase Auth</td><td>Social login + email; session management</td></tr>
+            <tr><td><span class="pill p-teal">Payments</span></td><td>Stripe (subscriptions + webhooks)</td><td>Industry standard; webhook-driven plan management</td></tr>
+            <tr><td><span class="pill p-teal">Storage</span></td><td>Cloudflare R2</td><td>S3-compatible; zero egress fees vs AWS S3</td></tr>
+            <tr><td><span class="pill p-teal">Video</span></td><td>FFmpeg via fluent-ffmpeg</td><td>Industry standard; open source; full control</td></tr>
+            <tr><td><span class="pill p-grn">AI Scripts</span></td><td>Anthropic Claude Sonnet 4</td><td>Best narrative structure and retention intelligence</td></tr>
+            <tr><td><span class="pill p-grn">AI Structure</span></td><td>OpenAI GPT-4o-mini</td><td>Cost-efficient for structured/JSON output tasks</td></tr>
+            <tr><td><span class="pill p-grn">Voice EN</span></td><td>ElevenLabs Multilingual v2</td><td>Best quality English neural voices</td></tr>
+            <tr><td><span class="pill p-grn">Voice HI</span></td><td>Azure Cognitive TTS (hi-IN)</td><td>Best Hindi neural voice; Hinglish code-switching</td></tr>
+            <tr><td><span class="pill p-grn">Images</span></td><td>Replicate (Flux.1-dev)</td><td>Phase 2; serverless GPU; no infra management</td></tr>
+            <tr><td><span class="pill p-org">Frontend host</span></td><td>Vercel (Edge Network)</td><td>Next.js native; global CDN; ISR/RSC support</td></tr>
+            <tr><td><span class="pill p-org">Backend host</span></td><td>Railway (autoscaling)</td><td>Simple deploy; autoscale; good DX; FFmpeg support</td></tr>
+            <tr><td><span class="pill p-org">Analytics</span></td><td>PostHog + Sentry</td><td>PostHog: product analytics; Sentry: error tracking</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">🔌</span>API Structure — Key Endpoints</div>
+        <div style="margin-bottom:10px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)">Base URL: https://api.creatoros.ai/v1 · Auth: Bearer JWT on all /app routes</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">AI Generation</div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/script</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/hooks</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/scenes</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/voice</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/seo</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/thumbnail</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/magic</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/generate/analyze</span></div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Projects & Render</div>
+            <div class="api-endpoint"><span class="api-method m-get">GET</span><span class="api-path">/projects</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/projects</span></div>
+            <div class="api-endpoint"><span class="api-method m-get">GET</span><span class="api-path">/projects/:id</span></div>
+            <div class="api-endpoint"><span class="api-method m-patch">PATCH</span><span class="api-path">/projects/:id/autosave</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/render/video</span></div>
+            <div class="api-endpoint"><span class="api-method m-get">GET</span><span class="api-path">/render/:jobId</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/export</span></div>
+            <div class="api-endpoint"><span class="api-method m-post">POST</span><span class="api-path">/subscription/webhook</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 7: MVP ROADMAP ══ -->
+    <section class="section" id="mvp">
+      <div class="section-id"><div class="snum">7</div>MVP Roadmap</div>
+      <h2>8 weeks to launch.<br>No shortcuts.</h2>
+      <p class="section-sub">Sprint-by-sprint delivery plan for the minimum viable product. Every week has a clear owner, deliverables, and acceptance criteria.</p>
+
+      <div class="sprint-timeline">
+        <div class="sprint-week"><div class="sw-label">WEEK 1–2</div><div class="sw-bar"><div class="sw-title">Foundation — Database + Auth + Shell</div><div class="sw-tasks"><span class="sw-task">Next.js 14 setup</span><span class="sw-task">Supabase + all 13 tables</span><span class="sw-task">Auth (email + Google)</span><span class="sw-task">Project CRUD</span><span class="sw-task">30s autosave</span><span class="sw-task">Dashboard shell UI</span><span class="sw-task">Pipeline header</span><span class="sw-task">Sidebar nav</span><span class="sw-task eng">Onboarding 6-screen flow</span></div></div></div>
+        <div class="sprint-week"><div class="sw-label">WEEK 3</div><div class="sw-bar"><div class="sw-title">Core AI Modules — Text Generation</div><div class="sw-tasks"><span class="sw-task">Script Studio API (Claude)</span><span class="sw-task">Script Studio UI (12 styles)</span><span class="sw-task">Hook Generator API + UI</span><span class="sw-task">Scene Creator API + UI</span><span class="sw-task eng">Prompt Generator (6 presets)</span><span class="sw-task">Engagement score display</span></div></div></div>
+        <div class="sprint-week"><div class="sw-label">WEEK 4</div><div class="sw-bar"><div class="sw-title">Media Modules — Voice, Thumbnail, SEO</div><div class="sw-tasks"><span class="sw-task">Voice Studio (ElevenLabs EN)</span><span class="sw-task">Voice Studio (Azure HI/Hinglish)</span><span class="sw-task">Voice preview + segment player</span><span class="sw-task eng">Thumbnail AI (5 canvas templates)</span><span class="sw-task">SEO Studio full package</span><span class="sw-task">SEO checklist UI</span></div></div></div>
+        <div class="sprint-week"><div class="sw-label">WEEK 5</div><div class="sw-bar"><div class="sw-title">Pipeline Orchestration + Rendering</div><div class="sw-tasks"><span class="sw-task">Magic Mode orchestration service</span><span class="sw-task">BullMQ + Redis job queue</span><span class="sw-task">FFmpeg render pipeline (full spec)</span><span class="sw-task eng">WebSocket progress events</span><span class="sw-task">Pipeline step validation</span><span class="sw-task">R2 upload + signed URLs</span></div></div></div>
+        <div class="sprint-week"><div class="sw-label">WEEK 6</div><div class="sw-bar"><div class="sw-title">Payments + Plan Enforcement</div><div class="sw-tasks"><span class="sw-task pay">Stripe 3-tier integration</span><span class="sw-task pay">Webhook handlers</span><span class="sw-task">Free plan limits (1min, watermark, 3 projects)</span><span class="sw-task">Upgrade wall component</span><span class="sw-task pay">Stripe checkout redirect</span><span class="sw-task">Credit system backend</span></div></div></div>
+        <div class="sprint-week"><div class="sw-label">WEEK 7</div><div class="sw-bar"><div class="sw-title">Shorts + Planner + Editor + Mobile</div><div class="sw-tasks"><span class="sw-task">Shorts Creator Mode (9:16 export)</span><span class="sw-task">Content Planner calendar + ideas</span><span class="sw-task eng">Auto Editor timeline UI</span><span class="sw-task">Project workspace page</span><span class="sw-task">Mobile responsive pass (all pages)</span><span class="sw-task">Empty + error states</span></div></div></div>
+        <div class="sprint-week"><div class="sw-label">WEEK 8</div><div class="sw-bar"><div class="sw-title">QA + Analytics + Beta Launch</div><div class="sw-tasks"><span class="sw-task qa">End-to-end pipeline test</span><span class="sw-task qa">Load test render queue</span><span class="sw-task qa">Security audit (rate limits, CSRF)</span><span class="sw-task">PostHog 20 events instrumented</span><span class="sw-task qa">Lighthouse score ≥85</span><span class="sw-task pay">Beta: 200 waitlist users</span></div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">💰</span>MVP Launch Financials</div>
+        <div class="three-col">
+          <div style="text-align:center;background:var(--s1);border-radius:10px;padding:16px"><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--grn);margin-bottom:4px">$800/mo</div><div style="font-size:12px;color:var(--muted)">MVP infra cost<br>at 0 users</div></div>
+          <div style="text-align:center;background:var(--s1);border-radius:10px;padding:16px"><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--vio);margin-bottom:4px">45 users</div><div style="font-size:12px;color:var(--muted)">Break-even at<br>Creator Pro $19/mo</div></div>
+          <div style="text-align:center;background:var(--s1);border-radius:10px;padding:16px"><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--teal);margin-bottom:4px">6–8 weeks</div><div style="font-size:12px;color:var(--muted)">Build time<br>2 engineers + 1 designer</div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 8: V2/V3 ROADMAP ══ -->
+    <section class="section" id="v2v3">
+      <div class="section-id"><div class="snum">8</div>V2 / V3 Roadmap</div>
+      <h2>Where this goes.<br>After launch.</h2>
+      <p class="section-sub">Post-MVP expansion organized by phase, timeline, and strategic importance. Each phase builds on the previous and increases switching cost.</p>
+
+      <div class="roadmap">
+        <div class="rm-phase rm-mvp">
+          <div class="rm-phase-label">MVP · Weeks 1–8</div>
+          <div class="rm-title">Foundation</div>
+          <div class="rm-timeline">Launch in 8 weeks</div>
+          <div class="rm-items">
+            <div class="rm-item">Complete AI pipeline</div>
+            <div class="rm-item">Voice EN + HI</div>
+            <div class="rm-item">FFmpeg auto editor</div>
+            <div class="rm-item">Stripe 3 tiers</div>
+            <div class="rm-item">Magic Mode</div>
+            <div class="rm-item">1080p export</div>
+            <div class="rm-item">Content Planner</div>
+            <div class="rm-item">Shorts Creator</div>
+          </div>
+        </div>
+        <div class="rm-phase rm-p2">
+          <div class="rm-phase-label">Phase 2 · Weeks 9–20</div>
+          <div class="rm-title">Intelligence</div>
+          <div class="rm-timeline">Month 3–5</div>
+          <div class="rm-items">
+            <div class="rm-item">Viral Blueprint AI</div>
+            <div class="rm-item">Direct YouTube upload</div>
+            <div class="rm-item">Brand voice memory</div>
+            <div class="rm-item">Character Studio (basic)</div>
+            <div class="rm-item">A/B thumbnails</div>
+            <div class="rm-item">Google Trends SEO</div>
+            <div class="rm-item">Team collaboration</div>
+            <div class="rm-item">WebSocket rendering</div>
+          </div>
+        </div>
+        <div class="rm-phase rm-p3">
+          <div class="rm-phase-label">Phase 3 · Weeks 21–36</div>
+          <div class="rm-title">Platform</div>
+          <div class="rm-timeline">Month 6–9</div>
+          <div class="rm-items">
+            <div class="rm-item">Character Studio advanced</div>
+            <div class="rm-item">4K export pipeline</div>
+            <div class="rm-item">API developer access</div>
+            <div class="rm-item">White-label exports</div>
+            <div class="rm-item">Multi-language expansion</div>
+            <div class="rm-item">Analytics dashboard</div>
+            <div class="rm-item">AI image generation</div>
+            <div class="rm-item">YouTube analytics integration</div>
+          </div>
+        </div>
+        <div class="rm-phase rm-ent">
+          <div class="rm-phase-label">Enterprise · Year 2+</div>
+          <div class="rm-title">Scale</div>
+          <div class="rm-timeline">Post $1M ARR</div>
+          <div class="rm-items">
+            <div class="rm-item">Custom voice cloning</div>
+            <div class="rm-item">Bulk video generation</div>
+            <div class="rm-item">Agency multi-account</div>
+            <div class="rm-item">SSO / SAML</div>
+            <div class="rm-item">Dedicated GPU</div>
+            <div class="rm-item">Plugin marketplace</div>
+            <div class="rm-item">Multi-platform (TikTok, IG)</div>
+            <div class="rm-item">Creator revenue intelligence</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card hl">
+        <div class="card-title"><span class="ct-icon">🎯</span>5-Year Revenue Targets</div>
+        <table class="bp-table">
+          <thead><tr><th>Year</th><th>Phase</th><th>Users (Paying)</th><th>MRR</th><th>ARR</th><th>Key Milestone</th></tr></thead>
+          <tbody>
+            <tr><td>Year 1</td><td>MVP + Phase 2</td><td>10,000</td><td>$194K</td><td>$2.34M</td><td>Market fit · Hindi #1 · Viral loop active</td></tr>
+            <tr><td>Year 2</td><td>Platform</td><td>40,000</td><td>$780K</td><td>$9.4M</td><td>Direct YouTube upload · Team collab · API beta</td></tr>
+            <tr><td>Year 3</td><td>Ecosystem</td><td>120,000</td><td>$2.2M</td><td>$26M</td><td>Plugin marketplace · Multi-language · Series A</td></tr>
+            <tr><td>Year 4</td><td>Multi-platform</td><td>300,000</td><td>$5.4M</td><td>$65M</td><td>TikTok + IG + LinkedIn · Creator revenue tools</td></tr>
+            <tr><td>Year 5</td><td>Category leader</td><td>700,000</td><td>$12M+</td><td>$140M+</td><td>Series B/C · Global creator OS · Acquisition target</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══ SECTION 9: IMPLEMENTATION CHECKLIST ══ -->
+    <section class="section" id="checklist">
+      <div class="section-id"><div class="snum">9</div>Implementation Checklist</div>
+      <h2>Build this.<br>In this order.</h2>
+      <p class="section-sub">Complete pre-launch checklist for designers and developers. Every item is actionable, ordered, and mapped to the PRD.</p>
+
+      <div class="checklist-grid">
+        <div class="cl-section">
+          <div class="cl-sec-title"><span style="color:var(--grn)">🎨</span>Design — Figma Handoff</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Design token library (colors, spacing, radius)</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Component library (buttons, cards, forms, pills)</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Landing page — desktop + mobile</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Onboarding flow — 6 screens</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Dashboard — all states (empty, loading, filled)</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Project workspace — all 7 steps</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Auto Editor timeline</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Shorts Creator — 9:16 phone mock</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Settings + billing pages</div>
+          <div class="cl-item done"><div class="cl-ic"></div>Admin dashboard</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Figma prototype with interactions</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Dark mode — only mode (by PRD)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Motion / animation specs for Framer</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Empty state illustrations</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>Accessibility audit (WCAG 2.1 AA)</div>
+        </div>
+        <div class="cl-section">
+          <div class="cl-sec-title"><span style="color:var(--vio)">⚙️</span>Engineering — Backend</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Next.js 14 project scaffold + TypeScript strict</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Supabase project + 13-table schema deployed</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Auth: NextAuth.js v5 + Google OAuth</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Drizzle ORM setup + type-safe queries</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Hono.js API router + middleware stack</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Rate limiting (per user + per plan)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>BullMQ + Upstash Redis job queue</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>FFmpeg worker pool on Railway</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Cloudflare R2 bucket + signed URL generation</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>WebSocket server (render progress events)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Stripe webhook handler (plan sync to DB)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>30-second autosave service</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Project version history (20 versions max)</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>Input sanitization + CSRF protection</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>API key secrets rotation strategy</div>
+        </div>
+        <div class="cl-section">
+          <div class="cl-sec-title"><span style="color:var(--teal)">🤖</span>Engineering — AI Layer</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Anthropic SDK: script, SEO, hook prompts</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>OpenAI SDK: scene, prompt, structure tasks</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>ElevenLabs API: 3 EN voices + segment output</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Azure TTS: Rohan (HI) + Priya (Hinglish)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Prompt caching layer (Redis, 24h TTL)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>AI model router (quality vs cost routing)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Fallback chain (primary fails → secondary)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Output validation (schema + retry once)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Factual content disclaimer injection</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Engagement score calculation logic</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>Token usage tracking per user per plan</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>Cost alert at $X/day threshold</div>
+        </div>
+        <div class="cl-section">
+          <div class="cl-sec-title"><span style="color:var(--org)">🚀</span>Launch Readiness</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>PostHog: 20 analytics events instrumented</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Sentry: error tracking + source maps</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Resend: email templates (verify, render done, trial ending)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Stripe: 3 price IDs configured + test webhooks</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Lighthouse ≥85 all pages (perf + a11y + SEO)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Load test: 10 concurrent render jobs</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>E2E test: Magic Mode → export (Playwright)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Privacy policy + terms of service pages</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Cookie consent (GDPR/India Digital laws)</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>2,000 waitlist emails: launch announcement</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Product Hunt submission prepared</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>Legal review: AI output ownership TOS clause</div>
+          <div class="cl-item warn"><div class="cl-ic"></div>Copyright transformation audit before launch</div>
+          <div class="cl-item todo"><div class="cl-ic"></div>Status page (uptime monitoring)</div>
+        </div>
+      </div>
+
+      <div class="card hl" style="border-color:rgba(16,185,129,.3)">
+        <div class="card-title" style="color:var(--grn)"><span class="ct-icon">✅</span>Definition of Done — MVP</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--muted)">
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--grn);flex-shrink:0">✓</span>A user can register, complete onboarding, and use Magic Mode to generate a complete video — entirely without human support or tutorials.</div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--grn);flex-shrink:0">✓</span>The full pipeline (script → scenes → voice → render → export) completes in under 15 minutes end-to-end.</div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--grn);flex-shrink:0">✓</span>Free plan limits are enforced. Upgrade wall works. Stripe checkout converts. Plan unlocks features immediately.</div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--grn);flex-shrink:0">✓</span>10 concurrent render jobs complete without queue failure. Autosave prevents data loss in all tested scenarios.</div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--grn);flex-shrink:0">✓</span>Hindi and Hinglish voiceover is generated and sounds natural to a native speaker (not robotic).</div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--grn);flex-shrink:0">✓</span>The platform passes a 14-year-old test: beginner creates first video without tutorials.</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:40px 0 0;border-top:1px solid var(--br2);margin-top:40px">
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px">CreatorOS Final Blueprint — Complete</div>
+        <div style="font-size:14px;color:var(--muted);margin-bottom:16px">"From idea to impact. For every creator. In every language."</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <a href="vision3-platform.html" class="btn-sm bv">View Landing Page</a>
+          <a href="dashboard.html" class="btn-sm bg">Open Dashboard</a>
+          <a href="ai-studio.html" class="btn-sm bg">Try Live AI Studio</a>
+          <a href="CreatorOS-PRD-Final.md" class="btn-sm bg">Read Full PRD</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// Reading progress
+window.addEventListener('scroll', () => {
+  const d = document.documentElement;
+  const pct = d.scrollTop / (d.scrollHeight - d.clientHeight) * 100;
+  document.getElementById('reading-fill').style.width = Math.min(pct,100)+'%';
+});
+
+// Sidenav active tracking
+const sectionIds = ['cover','pages','dashboard','components','features','flows','architecture','mvp','v2v3','checklist'];
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
+      const link = document.querySelector(`.sn-item[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, {rootMargin:'-30% 0px -60% 0px'});
+sectionIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
+
+// Smooth sidenav click
+document.querySelectorAll('.sn-item[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    document.getElementById(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+    document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+
+// Toast
+function t(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

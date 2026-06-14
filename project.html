@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorOS — Project Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#03030A;--s1:#080812;--s2:#0D0D1A;--s3:#111120;--s4:#1A1A35;
+  --vio:#8B5CF6;--vs:rgba(139,92,246,0.1);--vb:rgba(139,92,246,0.28);
+  --teal:#06B6D4;--ts:rgba(6,182,212,0.08);
+  --org:#F97316;--grn:#10B981;--gs:rgba(16,185,129,0.1);
+  --rose:#F43F5E;--amb:#F59E0B;
+  --txt:#EEEEFF;--muted:rgba(238,238,255,0.5);--faint:rgba(238,238,255,0.08);
+  --br:rgba(139,92,246,0.15);--br2:rgba(238,238,255,0.07);
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow:hidden}
+/* TOPBAR */
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(8,8,18,0.95);border-bottom:1px solid var(--br2);flex-shrink:0}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:center;gap:7px;letter-spacing:-.3px}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.logo-v{color:var(--vio)}
+.topbar-center{display:flex;align-items:center;gap:12px}
+.project-title{font-size:14px;font-weight:600}
+.save-tag{display:flex;align-items:center;gap:5px;padding:3px 9px;background:var(--gs);border:1px solid rgba(16,185,129,.2);border-radius:100px;font-size:11px;color:var(--grn);font-family:'JetBrains Mono',monospace}
+.save-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.btn-s{padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;border:none}
+.bg{background:transparent;border:1px solid var(--br2);color:var(--muted)}
+.bg:hover{border-color:var(--vio);color:var(--txt)}
+.bv{background:var(--vio);color:#fff;box-shadow:0 2px 12px rgba(139,92,246,.3)}
+.bv:hover{box-shadow:0 2px 20px rgba(139,92,246,.5)}
+.bo{background:var(--org);color:#fff}
+/* PIPELINE HEADER */
+.pipeline-hdr{height:48px;display:flex;align-items:center;padding:0 20px;gap:0;background:var(--s2);border-bottom:1px solid var(--br2);overflow-x:auto;flex-shrink:0}
+.pipeline-hdr::-webkit-scrollbar{height:0}
+.ps{display:flex;align-items:center;gap:0;cursor:pointer;flex-shrink:0}
+.ps-inner{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:7px;transition:all .12s}
+.ps:hover .ps-inner{background:var(--vs)}
+.ps.active .ps-inner{background:var(--vs);border:1px solid var(--vb)}
+.ps-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'JetBrains Mono',monospace;flex-shrink:0;transition:all .2s}
+.ps-n{background:var(--faint);border:1px solid var(--br2);color:var(--muted)}
+.ps-d{background:var(--gs);border:1px solid rgba(16,185,129,.3);color:var(--grn)}
+.ps-a{background:var(--vio);border:1px solid var(--vio);color:#fff;box-shadow:0 0 8px rgba(139,92,246,.4)}
+.ps-label{font-size:12px;color:var(--muted);white-space:nowrap}
+.ps.active .ps-label{color:var(--txt)}
+.ps.done .ps-label{color:var(--grn)}
+.ps-arrow{color:var(--faint);font-size:11px;padding:0 2px}
+/* BODY */
+.app-body{display:flex;flex:1;overflow:hidden}
+/* SIDEBAR */
+.sidebar{width:240px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--br2);display:flex;flex-direction:column;padding:14px 10px;overflow-y:auto;gap:4px}
+.sidebar::-webkit-scrollbar{width:3px}
+.s-sec{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;padding:8px 8px 4px}
+.nav-i{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .12s;font-size:13px;color:var(--muted)}
+.nav-i:hover{background:var(--vs);color:var(--txt)}
+.nav-i.on{background:var(--vs);border:1px solid var(--vb);color:var(--txt)}
+.ni-ic{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.ni-lbl{flex:1}
+.ni-st{font-size:10px;padding:1px 6px;border-radius:100px;font-family:'JetBrains Mono',monospace}
+.st-done{background:var(--gs);color:var(--grn);border:1px solid rgba(16,185,129,.2)}
+.st-act{background:var(--vs);color:var(--vio);border:1px solid var(--vb)}
+.st-wait{background:var(--faint);color:var(--muted);border:1px solid var(--br2)}
+.s-div{height:1px;background:var(--br2);margin:6px 6px}
+/* project meta card */
+.meta-card{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:12px;margin-top:auto}
+.mc-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.2px;margin-bottom:8px}
+.mc-rows{display:flex;flex-direction:column;gap:5px}
+.mc-row{display:flex;justify-content:space-between;align-items:center}
+.mc-lbl{font-size:11px;color:var(--muted)}
+.mc-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--teal)}
+.mc-prog{width:100%;height:3px;background:var(--faint);border-radius:100px;margin-top:8px;overflow:hidden}
+.mc-prog-fill{height:100%;background:linear-gradient(90deg,var(--vio),var(--teal));border-radius:100px}
+/* MAIN CONTENT */
+.main{flex:1;overflow-y:auto;padding:24px}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--br)}
+/* PAGE */
+.page{display:none;animation:fadeIn .3s ease}
+.page.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* COMMON */
+.pg-hdr{margin-bottom:24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.pg-hdr-l{}
+.pg-eyebrow{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px}
+.pg-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px}
+.pg-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.pg-actions{display:flex;gap:8px;flex-shrink:0}
+.card{background:var(--s2);border:1px solid var(--br2);border-radius:14px;padding:20px;margin-bottom:14px}
+.card.hl{border-color:var(--br)}
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px;margin-bottom:14px}
+/* SCRIPT */
+.script-section{margin-bottom:16px}
+.ss-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ss-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
+.ss-dot{width:6px;height:6px;border-radius:50%}
+.sd-h{background:var(--rose)}
+.sd-i{background:var(--amb)}
+.sd-b{background:var(--vio)}
+.sd-c{background:var(--teal)}
+.sd-o{background:var(--grn)}
+.ss-text{background:var(--s1);border:1px solid var(--br2);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.7;color:var(--txt)}
+.ss-text.hook-t{border-left:2px solid var(--rose)}
+.eng-score{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--gs);border:1px solid rgba(16,185,129,.2);border-radius:10px}
+.es-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--grn)}
+.es-lbl{font-size:13px;color:var(--muted)}
+.ret-tip{font-size:13px;color:var(--muted);padding:6px 0 6px 14px;border-bottom:1px solid var(--faint);position:relative}
+.ret-tip::before{content:'→';position:absolute;left:0;color:var(--vio)}
+.ret-tip:last-child{border-bottom:none}
+/* SCENES */
+.scene-cards{display:flex;flex-direction:column;gap:10px}
+.sc-card{background:var(--s1);border:1px solid var(--br2);border-radius:12px;padding:14px;display:grid;grid-template-columns:40px 1fr;gap:12px;cursor:pointer;transition:border-color .15s}
+.sc-card:hover,.sc-card.sel{border-color:var(--vio)}
+.sc-num{width:40px;height:40px;border-radius:10px;background:var(--vs);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--vio);flex-shrink:0}
+.sc-body{}
+.sc-hd{font-size:13px;font-weight:600;margin-bottom:8px}
+.sc-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.scm-i{background:var(--s2);border-radius:6px;padding:6px 8px}
+.scm-l{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1px}
+.scm-v{font-size:11px;color:var(--txt)}
+.sc-prompt{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.15);border-radius:8px;padding:8px 10px}
+.scp-l{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--teal);letter-spacing:.07em;margin-bottom:3px}
+.scp-t{font-size:11px;color:var(--muted);line-height:1.5}
+/* VOICE */
+.voice-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.vc-card{display:flex;align-items:center;gap:12px;padding:12px;background:var(--s1);border:1px solid var(--br2);border-radius:10px;cursor:pointer;transition:all .12s}
+.vc-card:hover,.vc-card.on{border-color:var(--vio);background:var(--vs)}
+.vc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.av-1{background:linear-gradient(135deg,var(--vio),#4a1aad)}
+.av-2{background:linear-gradient(135deg,var(--rose),#b02040)}
+.av-3{background:linear-gradient(135deg,var(--teal),#0080a0)}
+.av-4{background:linear-gradient(135deg,var(--grn),#088060)}
+.vc-info{flex:1}
+.vc-name{font-size:13px;font-weight:600;margin-bottom:1px}
+.vc-desc{font-size:11px;color:var(--muted)}
+.vc-play{width:28px;height:28px;border-radius:50%;background:var(--vs);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;color:var(--vio)}
+.vc-play:hover{background:var(--vio);color:#fff}
+/* waveform */
+.wf{height:40px;background:var(--s1);border:1px solid var(--br2);border-radius:8px;display:flex;align-items:center;padding:0 10px;gap:1.5px;overflow:hidden}
+.wb{flex:1;border-radius:100px;background:var(--vio);opacity:.5}
+/* SEO */
+.seo-field{margin-bottom:14px}
+.seo-lbl{display:flex;justify-content:space-between;margin-bottom:6px}
+.seo-ln{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.seo-cc{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--teal)}
+.seo-out{background:var(--s1);border:1px solid var(--br2);border-radius:9px;padding:11px 14px;font-size:13px;color:var(--txt);line-height:1.6;position:relative}
+.seo-out textarea{width:100%;background:transparent;border:none;outline:none;font-size:13px;color:var(--txt);line-height:1.6;resize:none;font-family:'Inter',sans-serif}
+.cp-btn{position:absolute;top:8px;right:8px;padding:3px 8px;background:var(--vs);border:1px solid var(--vb);border-radius:4px;font-size:11px;color:var(--vio);cursor:pointer;font-family:'Inter',sans-serif}
+.cp-btn:hover{background:var(--vio);color:#fff}
+.tags-row{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:4px 10px;background:var(--vs);border:1px solid var(--vb);border-radius:100px;font-size:12px;color:var(--vio);cursor:pointer}
+.tag:hover{background:var(--vio);color:#fff}
+/* SEO score */
+.seo-score-wrap{text-align:center;margin-bottom:14px}
+.ss-ring{width:90px;height:90px;margin:0 auto 10px;position:relative;display:flex;align-items:center;justify-content:center}
+.ss-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ss-bg{fill:none;stroke:var(--faint);stroke-width:6}
+.ss-fill{fill:none;stroke:var(--grn);stroke-width:6;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:30}
+.ss-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px;position:relative;z-index:1}
+/* checklist */
+.cl-item{display:flex;align-items:flex-start;gap:9px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--faint)}
+.cl-item:last-child{border-bottom:none}
+.cl-box{width:16px;height:16px;border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;border:1px solid var(--br2);background:transparent;transition:all .12s}
+.cl-box.ck{background:var(--grn);border-color:var(--grn);color:#000}
+/* EXPORT */
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.exp-opt{background:var(--s1);border:1px solid var(--br2);border-radius:12px;padding:16px;cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:12px}
+.exp-opt:hover,.exp-opt.on{border-color:var(--vio);background:var(--vs)}
+.exp-radio{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--br2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.exp-opt.on .exp-radio{border-color:var(--vio);background:var(--vio)}
+.exp-opt.on .exp-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.exp-info{}
+.exp-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.exp-desc{font-size:12px;color:var(--muted)}
+.exp-locked{font-size:11px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:100px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--amb)}
+.dl-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--vio),#4a1aad);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(139,92,246,.3)}
+.dl-btn:hover{box-shadow:0 4px 32px rgba(139,92,246,.5);transform:translateY(-1px)}
+/* TOAST */
+.toast-el{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--s3);border:1px solid var(--br);border-radius:10px;padding:12px 16px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast-el.show{transform:translateY(0);opacity:1}
+/* RESPONSIVE */
+@media(max-width:900px){.sidebar{display:none}.export-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;height:100%">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo"><div class="logo-dot"></div>Creator<span class="logo-v">OS</span></div>
+  <div class="topbar-center">
+    <div style="font-size:12px;color:var(--muted)">Projects /</div>
+    <div class="project-title">10 Shocking Facts About Black Holes</div>
+    <div class="save-tag"><div class="save-dot"></div>Saved · just now</div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-s bg" onclick="t('📤 Share link copied')">Share</button>
+    <button class="btn-s bg" onclick="window.location.href='editor.html'">🎬 Open Editor</button>
+    <button class="btn-s bv" onclick="goPage('export')">Export Video →</button>
+  </div>
+</div>
+
+<!-- PIPELINE HEADER -->
+<div class="pipeline-hdr" id="pipeline-hdr"></div>
+
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="s-sec">Project Steps</div>
+    <div class="nav-i" onclick="goPage('overview')"><div class="ni-ic">📋</div><div class="ni-lbl">Overview</div><span class="ni-st st-done">✓</span></div>
+    <div class="nav-i" onclick="goPage('script')"><div class="ni-ic">✍️</div><div class="ni-lbl">Script</div><span class="ni-st st-done">✓</span></div>
+    <div class="nav-i" onclick="goPage('scenes')"><div class="ni-ic">🎬</div><div class="ni-lbl">Scenes</div><span class="ni-st st-done">✓</span></div>
+    <div class="nav-i on" onclick="goPage('voice')"><div class="ni-ic">🎙️</div><div class="ni-lbl">Voice</div><span class="ni-st st-act">Active</span></div>
+    <div class="nav-i" onclick="goPage('thumbnail')"><div class="ni-ic">🖼️</div><div class="ni-lbl">Thumbnail</div><span class="ni-st st-wait">Waiting</span></div>
+    <div class="nav-i" onclick="goPage('seo')"><div class="ni-ic">📈</div><div class="ni-lbl">SEO</div><span class="ni-st st-wait">Waiting</span></div>
+    <div class="nav-i" onclick="goPage('export')"><div class="ni-ic">⬇️</div><div class="ni-lbl">Export</div><span class="ni-st st-wait">Waiting</span></div>
+    <div class="s-div"></div>
+    <div class="s-sec">Tools</div>
+    <div class="nav-i" onclick="window.location.href='editor.html'"><div class="ni-ic">⚙️</div><div class="ni-lbl">Auto Editor</div></div>
+    <div class="nav-i" onclick="t('🖼 Thumbnail studio opened')"><div class="ni-ic">🎨</div><div class="ni-lbl">Thumbnail AI</div></div>
+    <div class="nav-i" onclick="t('🔗 Viral Blueprint opened')"><div class="ni-ic">🔗</div><div class="ni-lbl">Viral Blueprint</div></div>
+    <div class="s-div"></div>
+    <div class="meta-card">
+      <div class="mc-title">Project Health</div>
+      <div class="mc-rows">
+        <div class="mc-row"><span class="mc-lbl">Steps done</span><span class="mc-val">3/7</span></div>
+        <div class="mc-row"><span class="mc-lbl">Engagement</span><span class="mc-val">91/100</span></div>
+        <div class="mc-row"><span class="mc-lbl">SEO score</span><span class="mc-val">—</span></div>
+        <div class="mc-row"><span class="mc-lbl">Export ready</span><span class="mc-val">No</span></div>
+      </div>
+      <div class="mc-prog"><div class="mc-prog-fill" style="width:43%"></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="page on" id="p-overview">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l">
+          <div class="pg-eyebrow">Project Overview</div>
+          <div class="pg-title">10 Shocking Facts About Black Holes</div>
+          <div class="pg-sub">Faceless · English · Long Video · 8 min target</div>
+        </div>
+        <div class="pg-actions">
+          <button class="btn-s bg" onclick="t('💡 New idea added')">+ Add Note</button>
+          <button class="btn-s bv" onclick="goPage('voice')">Continue → Voice</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+        <div class="card" style="padding:16px;text-align:center;cursor:pointer" onclick="goPage('script')">
+          <div style="font-size:24px;margin-bottom:6px">✍️</div>
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px">Script</div>
+          <div style="font-size:12px;color:var(--grn)">✓ Complete</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center;cursor:pointer" onclick="goPage('scenes')">
+          <div style="font-size:24px;margin-bottom:6px">🎬</div>
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px">Scenes</div>
+          <div style="font-size:12px;color:var(--grn)">✓ 10 scenes</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center;border-color:var(--vb);cursor:pointer" onclick="goPage('voice')">
+          <div style="font-size:24px;margin-bottom:6px">🎙️</div>
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px">Voice</div>
+          <div style="font-size:12px;color:var(--vio)">⟳ In progress</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center;opacity:.5;cursor:pointer" onclick="goPage('thumbnail')">
+          <div style="font-size:24px;margin-bottom:6px">🖼️</div>
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px">Thumbnail</div>
+          <div style="font-size:12px;color:var(--muted)">Waiting</div>
+        </div>
+      </div>
+      <div class="card hl">
+        <div class="card-title">Project Inspiration</div>
+        <div style="background:var(--s1);border:1px solid rgba(6,182,212,.15);border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);letter-spacing:.07em;margin-bottom:6px">VIRAL BLUEPRINT ANALYSIS</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.7"><strong style="color:var(--txt)">Analyzed:</strong> "The Fermi Paradox" (8.2M views)<br><strong style="color:var(--txt)">Hook type:</strong> Curiosity Gap · <strong style="color:var(--txt)">Peak retention:</strong> 65% mark · <strong style="color:var(--txt)">Story arc:</strong> Escalating mystery → revelation · <strong style="color:var(--txt)">Confidence:</strong> 91/100</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Next Action</div>
+        <div style="display:flex;align-items:center;gap:16px;padding:14px;background:var(--vs);border:1px solid var(--vb);border-radius:10px">
+          <div style="font-size:32px">🎙️</div>
+          <div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:3px">Generate your voiceover</div>
+            <div style="font-size:13px;color:var(--muted)">Choose from 6 voices · EN + HI + Hinglish · Preview before committing</div>
+          </div>
+          <button class="btn-s bv" style="margin-left:auto;flex-shrink:0" onclick="goPage('voice')">Go to Voice →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <div class="page" id="p-script">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l"><div class="pg-eyebrow">Step 2</div><div class="pg-title">Script Studio</div><div class="pg-sub">1,240 words · 8 min · Engagement score: 91/100</div></div>
+        <div class="pg-actions">
+          <button class="btn-s bg" onclick="t('↺ Script regenerated')">↺ Regenerate</button>
+          <button class="btn-s bv" onclick="goPage('scenes')">Scenes →</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:14px">
+        <div class="eng-score"><div class="es-num">91</div><div><div class="es-lbl" style="font-weight:600">Engagement Score</div><div class="es-lbl">Strong retention potential</div></div></div>
+        <div style="flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px">RETENTION TIPS</div>
+          <div class="ret-tip">Add pattern interrupt at 2:30 — "But wait — it gets weirder"</div>
+          <div class="ret-tip">Move Fact #7 earlier — it's your highest-curiosity moment</div>
+          <div class="ret-tip">End Fact #5 with a cliffhanger line to bridge into #6</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="script-section">
+          <div class="ss-hdr"><div class="ss-badge"><div class="ss-dot sd-h"></div>HOOK · 0:00–0:12</div><button class="btn-s bg" style="padding:4px 10px;font-size:11px" onclick="t('📋 Hook copied')">Copy</button></div>
+          <div class="ss-text hook-t">What if I told you there's an object in space so dense, that if you compressed Earth to the size of a marble — you'd create one? And once you cross its boundary, not even light can escape. What you're about to discover will make you question the very fabric of reality.</div>
+        </div>
+        <div class="script-section">
+          <div class="ss-hdr"><div class="ss-badge"><div class="ss-dot sd-i"></div>INTRO · 0:12–0:40</div><button class="btn-s bg" style="padding:4px 10px;font-size:11px" onclick="t('📋 Intro copied')">Copy</button></div>
+          <div class="ss-text">Black holes are the universe's most extreme objects. Scientists have studied them for decades, yet most people don't know the most shocking truths hiding inside them. In the next few minutes, we're going to break down 10 facts that will fundamentally change how you understand space, time, and existence itself.</div>
+        </div>
+        <div class="script-section">
+          <div class="ss-hdr"><div class="ss-badge"><div class="ss-dot sd-b"></div>FACT #1 · 0:40–1:30</div><button class="btn-s bg" style="padding:4px 10px;font-size:11px" onclick="t('📋 Fact 1 copied')">Copy</button></div>
+          <div class="ss-text"><strong>Black holes don't actually "suck."</strong> A black hole doesn't vacuum up surrounding matter — it simply warps gravity so intensely that anything crossing the event horizon is trapped. If our Sun magically became a black hole right now, Earth would keep orbiting normally. It would just get very, very dark.</div>
+        </div>
+        <div class="script-section">
+          <div class="ss-hdr"><div class="ss-badge"><div class="ss-dot sd-c"></div>CTA · 7:45–8:00</div><button class="btn-s bg" style="padding:4px 10px;font-size:11px" onclick="t('📋 CTA copied')">Copy</button></div>
+          <div class="ss-text">Hit subscribe — because next week we're going even deeper into the most terrifying objects in the known universe. Drop a comment: which fact shocked you most? I read every single one.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENES -->
+    <div class="page" id="p-scenes">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l"><div class="pg-eyebrow">Step 3</div><div class="pg-title">Scene Creator</div><div class="pg-sub">10 scenes · ~8 minutes · Drag to reorder</div></div>
+        <div class="pg-actions">
+          <button class="btn-s bg" onclick="t('↺ Scenes regenerated')">↺ Regenerate</button>
+          <button class="btn-s bv" onclick="goPage('voice')">Voice →</button>
+        </div>
+      </div>
+      <div class="scene-cards" id="scene-cards"></div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="page" id="p-voice">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l"><div class="pg-eyebrow">Step 4 — Current</div><div class="pg-title">Voice Studio</div><div class="pg-sub">Choose a voice · Generate · Preview · Approve</div></div>
+        <div class="pg-actions">
+          <button class="btn-s bg" onclick="t('⬇ Audio downloaded')">Download</button>
+          <button class="btn-s bv" onclick="goPage('thumbnail')">Thumbnail →</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div>
+          <div class="card">
+            <div class="card-title">Select Voice</div>
+            <div class="voice-cards">
+              <div class="vc-card on" onclick="selVoice(this)"><div class="vc-av av-1">🎙️</div><div class="vc-info"><div class="vc-name">Marcus — Deep Male</div><div class="vc-desc">Cinematic, authoritative</div></div><div class="vc-play" onclick="t('▶ Marcus preview')">▶</div></div>
+              <div class="vc-card" onclick="selVoice(this)"><div class="vc-av av-2">🎙️</div><div class="vc-info"><div class="vc-name">Aria — Female</div><div class="vc-desc">Clear, warm narrator</div></div><div class="vc-play" onclick="t('▶ Aria preview')">▶</div></div>
+              <div class="vc-card" onclick="selVoice(this)"><div class="vc-av av-3">🎙️</div><div class="vc-info"><div class="vc-name">Rohan — Hindi</div><div class="vc-desc">Natural warm Hindi</div></div><div class="vc-play" onclick="t('▶ Rohan preview')">▶</div></div>
+              <div class="vc-card" onclick="selVoice(this)"><div class="vc-av av-4">🎙️</div><div class="vc-info"><div class="vc-name">Priya — Hinglish</div><div class="vc-desc">Young energetic mix</div></div><div class="vc-play" onclick="t('▶ Priya preview')">▶</div></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:0">
+            <div class="card-title">Settings</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:var(--muted)">Speed</span><span id="spd-v" style="color:var(--teal);font-family:'JetBrains Mono',monospace">1.0×</span></div><input type="range" style="width:100%;height:3px;-webkit-appearance:none;background:var(--faint);border-radius:100px;cursor:pointer" min="75" max="150" value="100" oninput="document.getElementById('spd-v').textContent=(this.value/100).toFixed(1)+'×'"></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:var(--muted)">Emotion</span><span id="emo-v" style="color:var(--teal);font-family:'JetBrains Mono',monospace">70%</span></div><input type="range" style="width:100%;height:3px;-webkit-appearance:none;background:var(--faint);border-radius:100px;cursor:pointer" min="0" max="100" value="70" oninput="document.getElementById('emo-v').textContent=this.value+'%'"></div>
+              <button class="btn-s bv" style="width:100%;padding:11px" onclick="t('🎙️ Generating voiceover…')">Generate Voiceover</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin-bottom:0">Voiceover Preview</div>
+            <div style="font-size:12px;color:var(--muted)">Total: 7:48 · Marcus · 1.0×</div>
+          </div>
+          <div class="wf" id="wf-main"></div>
+          <div style="display:flex;gap:8px;margin:10px 0 14px">
+            <button class="btn-s bg" style="flex:1" onclick="t('▶ Playing full voiceover…')">▶ Play All</button>
+            <button class="btn-s bg" style="flex:1" onclick="t('⬇ Audio downloaded')">⬇ Download</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="seg-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THUMBNAIL -->
+    <div class="page" id="p-thumbnail">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l"><div class="pg-eyebrow">Step 5</div><div class="pg-title">Thumbnail AI</div><div class="pg-sub">A/B variants · CTR score · Click to select</div></div>
+        <div class="pg-actions">
+          <button class="btn-s bg" onclick="t('↺ New variants generated')">↺ New Variants</button>
+          <button class="btn-s bv" onclick="goPage('seo')">SEO →</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="card hl" style="cursor:pointer;text-align:center" onclick="t('✓ Thumbnail A selected')">
+          <div style="font-size:11px;font-family:\'JetBrains Mono\',monospace;color:var(--vio);margin-bottom:8px">VARIANT A — SELECTED · CTR ~8.2%</div>
+          <div style="aspect-ratio:16/9;background:linear-gradient(135deg,#1a0050,#0d1a3a);border-radius:8px;position:relative;overflow:hidden;display:flex;align-items:flex-end">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(139,92,246,.3),transparent)"></div>
+            <div style="padding:12px;position:relative;z-index:1">
+              <div style="font-family:\'Syne\',sans-serif;font-size:clamp(8px,2vw,18px);font-weight:800;opacity:.7">YOU WON'T BELIEVE THIS</div>
+              <div style="font-family:\'Syne\',sans-serif;font-size:clamp(12px,3vw,28px);font-weight:800;letter-spacing:-1px;line-height:1">10 SHOCKING<br><span style="color:#06B6D4">BLACK HOLE</span> FACTS</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center" onclick="t('✓ Thumbnail B selected')">
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:8px">VARIANT B · CTR ~7.4%</div>
+          <div style="aspect-ratio:16/9;background:linear-gradient(135deg,#0a0a0a,#1a1a2a);border-radius:8px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;padding:16px">
+              <div style="font-family:'Syne',sans-serif;font-size:clamp(10px,2.5vw,22px);font-weight:800;color:var(--rose);margin-bottom:4px">WHAT HAPPENS IF</div>
+              <div style="font-family:'Syne',sans-serif;font-size:clamp(8px,2vw,16px);font-weight:700;color:var(--muted)">you fall into a black hole?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:20px">✅</div><div><div style="font-size:14px;font-weight:600;margin-bottom:3px">Thumbnail A is stronger</div><div style="font-size:13px;color:var(--muted)">High contrast ✓ · Number hook ✓ · Bold text ✓ · Clear topic ✓ · Suggestion: Add a human element to increase CTR by ~2%</div></div></div>
+      </div>
+    </div>
+
+    <!-- SEO -->
+    <div class="page" id="p-seo">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l"><div class="pg-eyebrow">Step 6</div><div class="pg-title">SEO Studio</div><div class="pg-sub">Title · Description · Tags · Hashtags · Checklist</div></div>
+        <div class="pg-actions">
+          <button class="btn-s bg" onclick="t('↺ SEO re-optimized')">↺ Re-optimize</button>
+          <button class="btn-s bv" onclick="goPage('export')">Export →</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 280px;gap:16px">
+        <div class="card">
+          <div class="seo-field">
+            <div class="seo-lbl"><span class="seo-ln">SEO Title</span><span class="seo-cc">68/100</span></div>
+            <div class="seo-out"><textarea rows="2">10 Shocking Facts About Black Holes That Will Blow Your Mind (2026)</textarea><button class="cp-btn" onclick="t('📋 Copied')">Copy</button></div>
+          </div>
+          <div class="seo-field">
+            <div class="seo-lbl"><span class="seo-ln">High-CTR Alternative</span></div>
+            <div class="seo-out"><textarea rows="2">Scientists Are Hiding These 10 Black Hole Facts (Most People Don't Know #7)</textarea><button class="cp-btn" onclick="t('📋 Copied')">Copy</button></div>
+          </div>
+          <div class="seo-field">
+            <div class="seo-lbl"><span class="seo-ln">Description</span><span class="seo-cc">487 chars</span></div>
+            <div class="seo-out"><textarea rows="5">🌌 What do scientists actually know about black holes? In this video we break down 10 mind-bending facts — from why they don't "suck" to how time literally slows down near them.\n\n🔔 Subscribe for more space science every week!\n\n⏱️ Chapters:\n0:00 - Hook\n0:40 - Fact #1: They Don't Suck\n1:30 - Fact #2: Time Dilation is Real</textarea><button class="cp-btn" onclick="t('📋 Copied')">Copy</button></div>
+          </div>
+          <div class="seo-field">
+            <div class="seo-lbl"><span class="seo-ln">Tags</span></div>
+            <div class="tags-row">
+              <span class="tag">black holes</span><span class="tag">space facts 2026</span><span class="tag">universe explained</span><span class="tag">NASA discoveries</span><span class="tag">science facts</span><span class="tag">astrophysics</span><span class="tag">event horizon</span><span class="tag">time dilation</span><span class="tag">hawking radiation</span><span class="tag">mind blowing facts</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="text-align:center;margin-bottom:14px">
+            <div class="seo-score-wrap">
+              <div class="ss-ring">
+                <svg viewBox="0 0 90 90"><circle class="ss-bg" cx="45" cy="45" r="35"/><circle class="ss-fill" cx="45" cy="45" r="35"/></svg>
+                <div class="ss-num">87</div>
+              </div>
+              <div style="font-size:13px;color:var(--grn);margin-bottom:3px">Strong SEO</div>
+              <div style="font-size:12px;color:var(--muted)">3 improvements left</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Upload Checklist</div>
+            <div id="checklist"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="page" id="p-export">
+      <div class="pg-hdr">
+        <div class="pg-hdr-l"><div class="pg-eyebrow">Step 7 — Final</div><div class="pg-title">Export Video</div><div class="pg-sub">Choose quality · Download · Upload to YouTube</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Export Quality</div>
+        <div class="export-grid">
+          <div class="exp-opt on" onclick="selExp(this)"><div class="exp-radio"></div><div class="exp-info"><div class="exp-name">1080p HD</div><div class="exp-desc">No watermark · MP4 H.264 · Creator Pro</div></div></div>
+          <div class="exp-opt" onclick="selExp(this)"><div class="exp-radio"></div><div class="exp-info"><div class="exp-name">4K Ultra HD</div><div class="exp-desc">Maximum quality · Studio plan</div></div><span class="exp-locked">STUDIO</span></div>
+          <div class="exp-opt" onclick="selExp(this)"><div class="exp-radio"></div><div class="exp-info"><div class="exp-name">720p Standard</div><div class="exp-desc">With watermark · Free plan</div></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+          <div style="background:var(--s1);border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">Duration</div><div style="font-size:14px;font-weight:600">7:48</div></div>
+          <div style="background:var(--s1);border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">Resolution</div><div style="font-size:14px;font-weight:600">1920×1080</div></div>
+          <div style="background:var(--s1);border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">Est. Size</div><div style="font-size:14px;font-weight:600">~340 MB</div></div>
+        </div>
+        <button class="dl-btn" onclick="t('⚡ Render queued — you\'ll get an email when it\'s ready')">⚡ Render & Download (1080p)</button>
+        <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px">Estimated render time: ~5 minutes · Download link valid for 1 year</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<div class="toast-el" id="toastEl"></div>
+
+<script>
+// ── BUILD PIPELINE ──
+const steps=[{l:'Analyze',d:true},{l:'Script',d:true},{l:'Scenes',d:true},{l:'Voice',a:true},{l:'Thumbnail'},{l:'SEO'},{l:'Export'}];
+const ph=document.getElementById('pipeline-hdr');
+steps.forEach((s,i)=>{
+  const div=document.createElement('div');div.className='ps'+(s.active?' active':s.done?' done':'');
+  div.innerHTML=`<div class="ps-inner"><div class="ps-num ${s.done?'ps-d':s.active?'ps-a':'ps-n'}">${s.done?'✓':i+1}</div><div class="ps-label">${s.l}</div></div>`;
+  div.onclick=()=>goPage(['overview','script','scenes','voice','thumbnail','seo','export'][i]);
+  ph.appendChild(div);
+  if(i<steps.length-1){const a=document.createElement('div');a.className='ps-arrow';a.textContent='›';ph.appendChild(a);}
+});
+
+// ── BUILD SCENES ──
+const scenesData=[
+  {n:1,t:'Hook — The Marble Earth',dur:'12s',cam:'Close zoom-in',mood:'Suspense',trans:'Hard cut',sfx:'Deep rumble',prompt:'Cinematic space, Earth compressing into glowing marble, gravitational distortion rings, dark void, dramatic lighting, 8K'},
+  {n:2,t:'Intro — The Extreme Universe',dur:'28s',cam:'Wide establishing',mood:'Epic',trans:'Dissolve',sfx:'Space ambient',prompt:'Supermassive black hole center of galaxy, accretion disk glowing, star field, NASA telescope style, photorealistic'},
+  {n:3,t:"Fact #1 — They Don't Suck",dur:'50s',cam:'Medium orbital',mood:'Revealing',trans:'Wipe right',sfx:'Whoosh + bass',prompt:'Solar system, Sun replaced by black hole, planets orbiting normally, infographic style, 3D render'},
+  {n:4,t:'Fact #2 — Time Slows',dur:'45s',cam:'POV approach',mood:'Mind-bending',trans:'Dissolve',sfx:'Ticking distort',prompt:'Clock near black hole warping, time dilation visualization, surrealist scientific art, dramatic lighting'},
+];
+const sc=document.getElementById('scene-cards');
+scenesData.forEach(s=>{
+  const d=document.createElement('div');d.className='sc-card';
+  d.innerHTML=`<div class="sc-num">0${s.n}</div><div class="sc-body"><div class="sc-hd">${s.t}</div><div class="sc-meta"><div class="scm-i"><div class="scm-l">Duration</div><div class="scm-v">${s.dur}</div></div><div class="scm-i"><div class="scm-l">Camera</div><div class="scm-v">${s.cam}</div></div><div class="scm-i"><div class="scm-l">Mood</div><div class="scm-v">${s.mood}</div></div><div class="scm-i"><div class="scm-l">Transition</div><div class="scm-v">${s.trans}</div></div><div class="scm-i"><div class="scm-l">SFX</div><div class="scm-v">${s.sfx}</div></div></div><div class="sc-prompt"><div class="scp-l">✦ AI IMAGE PROMPT</div><div class="scp-t">${s.prompt}</div></div></div>`;
+  d.onclick=()=>{document.querySelectorAll('.sc-card').forEach(c=>c.classList.remove('sel'));d.classList.add('sel');t('🎬 Scene '+s.n+': '+s.t)};
+  sc.appendChild(d);
+});
+
+// ── BUILD WAVEFORM ──
+const wf=document.getElementById('wf-main');
+for(let i=0;i<90;i++){const b=document.createElement('div');b.className='wb';b.style.height=(15+Math.random()*70)+'%';b.style.animationDelay=(Math.random()*.5)+'s';wf.appendChild(b);}
+
+// ── BUILD SEGMENTS ──
+const segs=[
+  {t:'0:00',txt:"What if I told you there's an object so dense that not even light can escape?",dur:'0:12'},
+  {t:'0:12',txt:"Black holes are the universe's most extreme objects.",dur:'0:18'},
+  {t:'0:42',txt:"Black holes don't actually \"suck.\" Here's what most people get wrong.",dur:'0:28'},
+  {t:'1:22',txt:"Time literally slows down near a black hole — Einstein predicted this, and it's real.",dur:'0:32'},
+];
+const sl=document.getElementById('seg-list');
+segs.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--s1);border:1px solid var(--br2);border-radius:9px;cursor:pointer;transition:border-color .12s';
+  if(i===0) d.style.borderColor='var(--vio)';
+  d.innerHTML=`<button style="width:26px;height:26px;border-radius:50%;background:var(--vs);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;color:var(--vio);flex-shrink:0" onclick="t('▶ Playing segment…')">▶</button><div style="flex:1;font-size:13px;color:var(--muted);line-height:1.5">${s.txt}</div><div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--faint);flex-shrink:0">${s.dur}</div>`;
+  d.onclick=()=>{document.querySelectorAll('#seg-list > div').forEach(x=>x.style.borderColor='var(--br2)');d.style.borderColor='var(--vio)'};
+  sl.appendChild(d);
+});
+
+// ── BUILD CHECKLIST ──
+const checks=['Title includes keyword','Description is 300+ chars','10+ tags added','Chapters in description','Thumbnail uploaded','End screen + cards'];
+const cl=document.getElementById('checklist');
+checks.forEach((c,i)=>{
+  const d=document.createElement('div');d.className='cl-item';
+  const checked=i<4;
+  d.innerHTML=`<div class="cl-box${checked?' ck':''}" onclick="this.classList.toggle('ck')">${checked?'✓':''}</div><span>${c}</span>`;
+  cl.appendChild(d);
+});
+
+// ── NAVIGATION ──
+let currentPage='overview';
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  document.querySelectorAll('.nav-i').forEach(n=>n.classList.remove('on'));
+  document.querySelector(`.nav-i[onclick*="${id}"]`)?.classList.add('on');
+  currentPage=id;
+}
+function selVoice(el){document.querySelectorAll('.vc-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');t('🎙️ Voice selected: '+el.querySelector('.vc-name').textContent)}
+function selExp(el){document.querySelectorAll('.exp-opt').forEach(o=>o.classList.remove('on'));el.classList.add('on')}
+
+// ── TOAST ──
+function t(msg){const el=document.getElementById('toastEl');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>el.classList.remove('show'),3000)}
+</script>
+</body>
+</html>

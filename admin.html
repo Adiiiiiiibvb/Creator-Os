@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorOS — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#03030A;--s1:#080812;--s2:#0D0D1A;--s3:#111120;--s4:#1A1A35;
+  --vio:#8B5CF6;--vs:rgba(139,92,246,.1);--vb:rgba(139,92,246,.28);
+  --teal:#06B6D4;--ts:rgba(6,182,212,.08);
+  --org:#F97316;--os:rgba(249,115,22,.08);
+  --grn:#10B981;--gs:rgba(16,185,129,.1);
+  --rose:#F43F5E;--rs:rgba(244,63,94,.08);
+  --amb:#F59E0B;--as:rgba(245,158,11,.08);
+  --txt:#EEEEFF;--muted:rgba(238,238,255,.5);--faint:rgba(238,238,255,.08);
+  --br:rgba(139,92,246,.15);--br2:rgba(238,238,255,.07);
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* TOPBAR */
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(8,8,18,.95);border-bottom:1px solid var(--br2);flex-shrink:0}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:center;gap:7px;letter-spacing:-.3px}
+.ld{width:6px;height:6px;border-radius:50%;background:var(--rose);box-shadow:0 0 6px var(--rose);animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.4}}
+.lv{color:var(--vio)}
+.admin-badge{display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--rs);border:1px solid rgba(244,63,94,.25);border-radius:100px;font-size:11px;color:var(--rose);font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+.topbar-r{display:flex;gap:8px;align-items:center}
+.live-users{display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--gs);border:1px solid rgba(16,185,129,.2);border-radius:100px;font-size:12px;color:var(--grn)}
+.lu-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:p 1.2s infinite}
+.btn{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s}
+.bg{background:transparent;border:1px solid var(--br2);color:var(--muted)}.bg:hover{border-color:var(--vio);color:var(--txt)}
+
+/* LAYOUT */
+.app{display:flex;height:100%}
+.sidebar{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--br2);padding:12px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.si{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .12s}
+.si:hover{background:var(--vs);color:var(--txt)}
+.si.on{background:var(--vs);border:1px solid var(--vb);color:var(--txt)}
+.si-ic{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.s-sep{height:1px;background:var(--br2);margin:6px 4px}
+.s-lbl{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--faint);letter-spacing:.09em;text-transform:uppercase;padding:6px 10px 2px}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.page{display:none}
+.page.on{display:contents}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.kpi{background:var(--s2);border:1px solid var(--br2);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.k-grn::before{background:linear-gradient(90deg,var(--grn),transparent)}
+.kpi.k-vio::before{background:linear-gradient(90deg,var(--vio),transparent)}
+.kpi.k-teal::before{background:linear-gradient(90deg,var(--teal),transparent)}
+.kpi.k-org::before{background:linear-gradient(90deg,var(--org),transparent)}
+.kpi.k-rose::before{background:linear-gradient(90deg,var(--rose),transparent)}
+.kpi-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.kpi-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:4px}
+.kpi.k-grn .kpi-num{color:var(--grn)}
+.kpi.k-vio .kpi-num{color:var(--vio)}
+.kpi.k-teal .kpi-num{color:var(--teal)}
+.kpi.k-org .kpi-num{color:var(--org)}
+.kpi.k-rose .kpi-num{color:var(--rose)}
+.kpi-change{font-size:12px;display:flex;align-items:center;gap:4px}
+.kpi-change.up{color:var(--grn)}.kpi-change.down{color:var(--rose)}
+.kpi-sub{font-size:11px;color:var(--faint);margin-top:2px}
+
+/* CHART CARD */
+.chart-card{background:var(--s2);border:1px solid var(--br2);border-radius:14px;padding:20px}
+.cc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cc-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.cc-meta{font-size:12px;color:var(--muted)}
+.chart-area{position:relative}
+
+/* SVG CHARTS */
+.chart-svg{width:100%;overflow:visible}
+.chart-grid{stroke:var(--faint);stroke-width:1}
+.chart-line{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.chart-area-fill{opacity:.15}
+.chart-dot{cursor:pointer;transition:r .15s}
+.chart-dot:hover{r:6}
+.chart-bar{cursor:pointer;transition:opacity .15s;border-radius:4px}
+.chart-bar:hover{opacity:.8}
+
+/* DATA TABLE */
+.data-table{width:100%;border-collapse:separate;border-spacing:0}
+.data-table th{padding:10px 14px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;text-align:left;border-bottom:1px solid var(--br2);background:var(--s2)}
+.data-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--faint)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(139,92,246,.03)}
+.data-table th:first-child{border-radius:10px 0 0 0}
+.data-table th:last-child{border-radius:0 10px 0 0}
+
+/* STATUS PILLS */
+.pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:100px}
+.p-grn{background:var(--gs);color:var(--grn);border:1px solid rgba(16,185,129,.2)}
+.p-amb{background:var(--as);color:var(--amb);border:1px solid rgba(245,158,11,.2)}
+.p-rose{background:var(--rs);color:var(--rose);border:1px solid rgba(244,63,94,.2)}
+.p-vio{background:var(--vs);color:var(--vio);border:1px solid var(--vb)}
+.p-teal{background:var(--ts);color:var(--teal);border:1px solid rgba(6,182,212,.2)}
+
+/* RENDER QUEUE */
+.queue-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s1);border:1px solid var(--br2);border-radius:10px;margin-bottom:8px}
+.qi-left{flex:1}
+.qi-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.qi-meta{font-size:11px;color:var(--muted);display:flex;gap:10px}
+.qi-prog-wrap{flex:1;max-width:200px}
+.qi-prog{height:3px;background:var(--faint);border-radius:100px;overflow:hidden;margin-bottom:3px}
+.qi-prog-fill{height:100%;border-radius:100px}
+.qi-pct{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);text-align:right}
+.qi-status{flex-shrink:0}
+
+/* COHORT TABLE */
+.cohort-row{display:flex;gap:4px;margin-bottom:4px;align-items:center}
+.cohort-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);width:80px;flex-shrink:0}
+.cohort-cell{
+  flex:1;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;
+}
+
+/* MRR BREAKDOWN */
+.mrr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--faint)}
+.mrr-row:last-child{border-bottom:none}
+.mrr-plan{font-size:13px;flex:1}
+.mrr-bar-wrap{flex:2;height:4px;background:var(--faint);border-radius:100px;overflow:hidden}
+.mrr-bar{height:100%;border-radius:100px}
+.mrr-val{font-size:12px;font-family:'JetBrains Mono',monospace;min-width:70px;text-align:right}
+
+/* 2-col grid */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--s3);border:1px solid var(--br);border-radius:10px;padding:12px 16px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.36,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:1000px){.kpi-row{grid-template-columns:repeat(3,1fr)}.sidebar{display:none}}
+@media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}.two-col,.three-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;height:100%">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo"><div class="ld"></div>Creator<span class="lv">OS</span> <span style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-left:4px">/ admin</span></div>
+  <div class="admin-badge">⚑ INTERNAL — FOUNDER VIEW</div>
+  <div class="topbar-r">
+    <div class="live-users"><div class="lu-dot"></div>1,247 online now</div>
+    <button class="btn bg" onclick="t('📊 Full report exported')">Export Report</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="s-lbl">Analytics</div>
+    <div class="si on" onclick="goPage('overview',this)"><div class="si-ic">📊</div>Overview</div>
+    <div class="si" onclick="goPage('revenue',this)"><div class="si-ic">💰</div>Revenue</div>
+    <div class="si" onclick="goPage('users',this)"><div class="si-ic">👥</div>Users</div>
+    <div class="si" onclick="goPage('retention',this)"><div class="si-ic">📈</div>Retention</div>
+    <div class="s-sep"></div>
+    <div class="s-lbl">Operations</div>
+    <div class="si" onclick="goPage('queue',this)"><div class="si-ic">⚙️</div>Render Queue</div>
+    <div class="si" onclick="goPage('ai',this)"><div class="si-ic">🤖</div>AI Usage</div>
+    <div class="s-sep"></div>
+    <div class="s-lbl">Growth</div>
+    <div class="si" onclick="goPage('funnel',this)"><div class="si-ic">🔽</div>Funnel</div>
+    <div class="si" onclick="goPage('cohorts',this)"><div class="si-ic">🎯</div>Cohorts</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="page on" id="p-overview">
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi k-grn">
+          <div class="kpi-label">MRR</div>
+          <div class="kpi-num" id="mrr-num">$0</div>
+          <div class="kpi-change up">↑ 23% vs last month</div>
+          <div class="kpi-sub">$2.34M ARR run rate</div>
+        </div>
+        <div class="kpi k-vio">
+          <div class="kpi-label">Total Users</div>
+          <div class="kpi-num" id="users-num">0</div>
+          <div class="kpi-change up">↑ 18% MoM</div>
+          <div class="kpi-sub">47.2K active last 30d</div>
+        </div>
+        <div class="kpi k-teal">
+          <div class="kpi-label">Paying Users</div>
+          <div class="kpi-num" id="paying-num">0</div>
+          <div class="kpi-change up">↑ 31% MoM</div>
+          <div class="kpi-sub">12.8% conversion rate</div>
+        </div>
+        <div class="kpi k-org">
+          <div class="kpi-label">Videos Created</div>
+          <div class="kpi-num" id="videos-num">0</div>
+          <div class="kpi-change up">↑ 41% MoM</div>
+          <div class="kpi-sub">8,960 today</div>
+        </div>
+        <div class="kpi k-rose">
+          <div class="kpi-label">Churn Rate</div>
+          <div class="kpi-num">4.2%</div>
+          <div class="kpi-change down">↓ 0.8% vs last month</div>
+          <div class="kpi-sub">Avg lifetime: 14.2mo</div>
+        </div>
+      </div>
+
+      <!-- MRR CHART + BREAKDOWN -->
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="cc-hdr">
+            <div class="cc-title">Monthly Recurring Revenue</div>
+            <div class="cc-meta" id="mrr-hover">Hover for details</div>
+          </div>
+          <svg class="chart-svg" height="180" id="mrr-chart"></svg>
+        </div>
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">Revenue by Plan</div></div>
+          <div style="margin-bottom:12px" id="mrr-breakdown"></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--br2)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>COGS (AI + infra)</span><span style="color:var(--rose)">$14,700/mo</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Gross margin</span><span style="color:var(--grn)">92.4%</span></div>
+            <div style="display:flex;justify-content:space-between"><span>Net margin (est)</span><span style="color:var(--amb)">~55%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER GROWTH + SIGNUPS -->
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">User Growth (90 days)</div></div>
+          <svg class="chart-svg" height="160" id="user-chart"></svg>
+        </div>
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">Daily Signups — Last 14 Days</div></div>
+          <svg class="chart-svg" height="160" id="signup-chart"></svg>
+        </div>
+      </div>
+
+      <!-- TOP EVENTS -->
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Top Analytics Events — Today</div><div class="cc-meta">Last updated 2 min ago</div></div>
+        <table class="data-table">
+          <thead><tr><th>Event</th><th>Count</th><th>Unique Users</th><th>vs Yesterday</th><th>Conversion Impact</th></tr></thead>
+          <tbody id="events-table"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- ══ REVENUE ══ -->
+    <div class="page" id="p-revenue">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi k-grn"><div class="kpi-label">MRR</div><div class="kpi-num">$194K</div><div class="kpi-change up">↑ 23% MoM</div></div>
+        <div class="kpi k-vio"><div class="kpi-label">ARR Run Rate</div><div class="kpi-num">$2.34M</div><div class="kpi-change up">↑ 31% MoM</div></div>
+        <div class="kpi k-teal"><div class="kpi-label">ARPU (paid)</div><div class="kpi-num">$26.40</div><div class="kpi-change up">↑ $1.20</div></div>
+        <div class="kpi k-org"><div class="kpi-label">LTV (avg)</div><div class="kpi-num">$374</div><div class="kpi-change up">↑ 8%</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">MRR Waterfall — New / Expansion / Churn</div></div>
+        <svg class="chart-svg" height="200" id="waterfall-chart"></svg>
+      </div>
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">Plan Distribution</div></div>
+          <svg class="chart-svg" height="200" id="plan-dist-chart"></svg>
+        </div>
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">Recent Transactions</div></div>
+          <table class="data-table">
+            <thead><tr><th>User</th><th>Plan</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="txn-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RENDER QUEUE ══ -->
+    <div class="page" id="p-queue">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi k-org"><div class="kpi-label">Active Jobs</div><div class="kpi-num">23</div><div class="kpi-sub">3 workers busy</div></div>
+        <div class="kpi k-grn"><div class="kpi-label">Completed Today</div><div class="kpi-num">1,840</div><div class="kpi-change up">↑ 12%</div></div>
+        <div class="kpi k-teal"><div class="kpi-label">Avg Render Time</div><div class="kpi-num">4m 12s</div><div class="kpi-change up">↓ 18s faster</div></div>
+        <div class="kpi k-rose"><div class="kpi-label">Failed Jobs</div><div class="kpi-num">7</div><div class="kpi-sub">0.4% error rate</div></div>
+      </div>
+
+      <!-- Worker Status -->
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Worker Pool Status</div><div class="cc-meta">10 workers · 3 busy · 7 idle</div></div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px" id="worker-grid"></div>
+      </div>
+
+      <!-- Active Jobs -->
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Active Render Jobs</div><button class="btn bg" style="font-size:11px;padding:4px 10px" onclick="t('↺ Queue refreshed')">↺ Refresh</button></div>
+        <div id="queue-jobs"></div>
+      </div>
+
+      <!-- Recent Completed -->
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Recently Completed</div></div>
+        <table class="data-table">
+          <thead><tr><th>Project</th><th>User</th><th>Plan</th><th>Duration</th><th>Render Time</th><th>Status</th></tr></thead>
+          <tbody id="completed-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ AI USAGE ══ -->
+    <div class="page" id="p-ai">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi k-vio"><div class="kpi-label">AI Cost Today</div><div class="kpi-num">$487</div><div class="kpi-change down">↑ 12% vs avg</div></div>
+        <div class="kpi k-teal"><div class="kpi-label">Requests Today</div><div class="kpi-num">84K</div><div class="kpi-change up">↑ 8%</div></div>
+        <div class="kpi k-grn"><div class="kpi-label">Cache Hit Rate</div><div class="kpi-num">34%</div><div class="kpi-sub">Saves ~$165/day</div></div>
+        <div class="kpi k-org"><div class="kpi-label">Avg Latency</div><div class="kpi-num">1.8s</div><div class="kpi-change up">↓ 200ms</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">AI Provider Cost Breakdown</div></div>
+        <div id="ai-breakdown"></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Model Usage by Feature</div></div>
+        <table class="data-table">
+          <thead><tr><th>Feature</th><th>Model</th><th>Calls Today</th><th>Avg Tokens</th><th>Cost Today</th><th>Cache Rate</th></tr></thead>
+          <tbody id="model-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ FUNNEL ══ -->
+    <div class="page" id="p-funnel">
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Conversion Funnel — Last 30 Days</div></div>
+        <div id="funnel-steps"></div>
+      </div>
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">Upgrade Trigger Distribution</div></div>
+          <div id="upgrade-triggers"></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-hdr"><div class="cc-title">Drop-off Points</div></div>
+          <div id="dropoff-points"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COHORTS ══ -->
+    <div class="page" id="p-cohorts">
+      <div class="chart-card">
+        <div class="cc-hdr">
+          <div class="cc-title">Retention Cohort Table — % still active by week</div>
+          <div class="cc-meta">Darker = higher retention</div>
+        </div>
+        <div id="cohort-table"></div>
+      </div>
+    </div>
+
+    <!-- ══ USERS ══ -->
+    <div class="page" id="p-users">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi k-vio"><div class="kpi-label">Total Signups</div><div class="kpi-num">284K</div><div class="kpi-change up">↑ 18% MoM</div></div>
+        <div class="kpi k-grn"><div class="kpi-label">Active (30d)</div><div class="kpi-num">47.2K</div><div class="kpi-sub">16.6% DAU/MAU</div></div>
+        <div class="kpi k-teal"><div class="kpi-label">New Today</div><div class="kpi-num">1,840</div><div class="kpi-change up">↑ 23%</div></div>
+        <div class="kpi k-org"><div class="kpi-label">Avg Videos/User</div><div class="kpi-num">5.4</div><div class="kpi-change up">↑ 0.8</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Recent Signups</div><button class="btn bg" style="font-size:11px;padding:4px 10px" onclick="t('🔍 User search opened')">Search Users</button></div>
+        <table class="data-table">
+          <thead><tr><th>User</th><th>Plan</th><th>Niche</th><th>Videos</th><th>Joined</th><th>Status</th></tr></thead>
+          <tbody id="users-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ RETENTION ══ -->
+    <div class="page" id="p-retention">
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kpi k-grn"><div class="kpi-label">D1 Retention</div><div class="kpi-num">68%</div><div class="kpi-change up">↑ 4%</div></div>
+        <div class="kpi k-vio"><div class="kpi-label">D7 Retention</div><div class="kpi-num">41%</div><div class="kpi-change up">↑ 6%</div></div>
+        <div class="kpi k-teal"><div class="kpi-label">D30 Retention</div><div class="kpi-num">28%</div><div class="kpi-change up">↑ 3%</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-hdr"><div class="cc-title">Retention Curves — Free vs Creator Pro vs Studio</div></div>
+        <svg class="chart-svg" height="220" id="retention-chart"></svg>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ── PAGE NAV ──
+function goPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  document.querySelectorAll('.si').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  buildPage(id);
+}
+function buildPage(id){
+  if(id==='overview') buildOverview();
+  else if(id==='revenue') buildRevenue();
+  else if(id==='queue') buildQueue();
+  else if(id==='ai') buildAI();
+  else if(id==='funnel') buildFunnel();
+  else if(id==='cohorts') buildCohorts();
+  else if(id==='users') buildUsers();
+  else if(id==='retention') buildRetention();
+}
+
+// ── COUNTER ANIM ──
+function animCount(el, end, prefix='', suffix='', dur=1200){
+  let start=0; const step=end/(dur/16);
+  const iv=setInterval(()=>{start=Math.min(start+step,end);el.textContent=prefix+Math.floor(start).toLocaleString()+suffix;if(start>=end)clearInterval(iv)},16);
+}
+
+// ── COLORS ──
+const C={grn:'#10B981',vio:'#8B5CF6',teal:'#06B6D4',org:'#F97316',rose:'#F43F5E',amb:'#F59E0B'};
+
+// ── DRAW LINE CHART ──
+function lineChart(svgId, datasets, labels, h=160){
+  const svg=document.getElementById(svgId); if(!svg) return;
+  const W=svg.clientWidth||600;
+  svg.setAttribute('viewBox',`0 0 ${W} ${h}`);
+  svg.innerHTML='';
+  const maxY=Math.max(...datasets.flatMap(d=>d.data))*1.15;
+  const pad={l:40,r:16,t:12,b:24};
+  const cw=W-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const n=labels.length;
+  // grid
+  [0,0.25,0.5,0.75,1].forEach(f=>{
+    const y=pad.t+ch*(1-f);
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',pad.l);l.setAttribute('x2',W-pad.r);l.setAttribute('y1',y);l.setAttribute('y2',y);
+    l.setAttribute('stroke','rgba(238,238,255,0.05)');l.setAttribute('stroke-width','1');svg.appendChild(l);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',pad.l-6);t.setAttribute('y',y+4);t.setAttribute('text-anchor','end');
+    t.setAttribute('font-size','9');t.setAttribute('fill','rgba(238,238,255,0.35)');t.setAttribute('font-family','JetBrains Mono');
+    t.textContent=f===0?'0':(Math.round(maxY*f/1000)+'K');svg.appendChild(t);
+  });
+  // x labels
+  labels.forEach((lbl,i)=>{
+    if(i%Math.ceil(n/6)!==0) return;
+    const x=pad.l+(i/(n-1))*cw;
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',x);t.setAttribute('y',h-4);t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','9');t.setAttribute('fill','rgba(238,238,255,0.35)');t.setAttribute('font-family','JetBrains Mono');
+    t.textContent=lbl;svg.appendChild(t);
+  });
+  datasets.forEach(ds=>{
+    const pts=ds.data.map((v,i)=>`${pad.l+(i/(n-1))*cw},${pad.t+ch*(1-v/maxY)}`);
+    // area
+    const aPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+    aPath.setAttribute('d',`M${pts[0]} L${pts.join(' L')} L${pad.l+(n-1)/(n-1)*cw},${pad.t+ch} L${pad.l},${pad.t+ch} Z`);
+    aPath.setAttribute('fill',ds.color);aPath.setAttribute('opacity','0.12');svg.appendChild(aPath);
+    // line
+    const lPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+    lPath.setAttribute('d',`M${pts.join(' L')}`);
+    lPath.setAttribute('stroke',ds.color);lPath.setAttribute('stroke-width','2.5');lPath.setAttribute('fill','none');
+    lPath.setAttribute('stroke-linecap','round');svg.appendChild(lPath);
+    // dots
+    ds.data.forEach((v,i)=>{
+      const cx=pad.l+(i/(n-1))*cw, cy=pad.t+ch*(1-v/maxY);
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r','3');
+      c.setAttribute('fill',ds.color);c.setAttribute('cursor','pointer');
+      c.addEventListener('mouseenter',()=>{
+        const meta=document.getElementById(svgId.replace('-chart','-hover'));
+        if(meta) meta.textContent=`${ds.label}: ${v.toLocaleString()} on ${labels[i]}`;
+      });
+      svg.appendChild(c);
+    });
+  });
+}
+
+// ── DRAW BAR CHART ──
+function barChart(svgId, data, labels, colors, h=160){
+  const svg=document.getElementById(svgId); if(!svg) return;
+  const W=svg.clientWidth||600;
+  svg.setAttribute('viewBox',`0 0 ${W} ${h}`);
+  svg.innerHTML='';
+  const max=Math.max(...data)*1.15;
+  const pad={l:8,r:8,t:12,b:24};
+  const cw=W-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const bw=Math.min(cw/data.length*0.65,40);
+  const gap=cw/data.length;
+  data.forEach((v,i)=>{
+    const x=pad.l+gap*i+gap*0.175, bh=ch*(v/max), by=pad.t+ch-bh;
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',x);rect.setAttribute('y',by);rect.setAttribute('width',bw);rect.setAttribute('height',bh);
+    rect.setAttribute('rx','4');rect.setAttribute('fill',colors[i%colors.length]);rect.setAttribute('opacity','0.8');
+    rect.addEventListener('mouseenter',()=>rect.setAttribute('opacity','1'));
+    rect.addEventListener('mouseleave',()=>rect.setAttribute('opacity','0.8'));
+    svg.appendChild(rect);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',x+bw/2);t.setAttribute('y',h-4);t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','9');t.setAttribute('fill','rgba(238,238,255,.4)');t.setAttribute('font-family','JetBrains Mono');
+    t.textContent=labels[i];svg.appendChild(t);
+    const vt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    vt.setAttribute('x',x+bw/2);vt.setAttribute('y',by-4);vt.setAttribute('text-anchor','middle');
+    vt.setAttribute('font-size','9');vt.setAttribute('fill',colors[i%colors.length]);vt.setAttribute('font-family','JetBrains Mono');
+    vt.textContent=v>999?(v/1000).toFixed(1)+'K':v;svg.appendChild(vt);
+  });
+}
+
+// ── MRR DATA ──
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+const mrrData=[12000,18000,28000,42000,61000,84000,108000,132000,155000,172000,182000,188000,191000,193000,194750];
+
+// ── BUILD OVERVIEW ──
+function buildOverview(){
+  animCount(document.getElementById('mrr-num'),194750,'$','');
+  animCount(document.getElementById('users-num'),284000,'','');
+  animCount(document.getElementById('paying-num'),12400,'','');
+  animCount(document.getElementById('videos-num'),267000,'','');
+  // MRR chart
+  setTimeout(()=>lineChart('mrr-chart',[{data:mrrData,color:C.grn,label:'MRR'}],months,180),100);
+  // User chart
+  const uData=months.map((_,i)=>Math.round(12000+i*20000+Math.random()*5000));
+  setTimeout(()=>lineChart('user-chart',[{data:uData,color:C.vio,label:'Users'}],months,160),100);
+  // Signup bar chart
+  const signups=[920,1040,880,1120,1340,1180,1420,1580,1490,1640,1720,1580,1810,1840];
+  const days=['6/1','6/2','6/3','6/4','6/5','6/6','6/7','6/8','6/9','6/10','6/11','6/12','6/13','6/14'];
+  setTimeout(()=>barChart('signup-chart',signups,days,[C.vio,C.teal,C.grn,C.org],160),100);
+  // MRR breakdown
+  const breakdown=document.getElementById('mrr-breakdown');
+  const plans=[{n:'Creator Pro (9K users)',v:171000,c:C.vio},{n:'Studio (1.4K users)',v:13720,c:C.teal},{n:'Credits & Add-ons',v:4500,c:C.org},{n:'Enterprise (5 clients)',v:6000,c:C.grn}];
+  const total=plans.reduce((a,b)=>a+b.v,0);
+  breakdown.innerHTML=plans.map(p=>`<div class="mrr-row"><span class="mrr-plan">${p.n}</span><div class="mrr-bar-wrap"><div class="mrr-bar" style="width:${p.v/total*100}%;background:${p.c};height:100%"></div></div><span class="mrr-val" style="color:${p.c}">$${(p.v/1000).toFixed(0)}K</span></div>`).join('');
+  // Events table
+  const events=[
+    ['script_generated','24,840','18,200','↑ 12%','HIGH'],
+    ['export_downloaded','8,240','6,800','↑ 18%','CRITICAL'],
+    ['upgrade_wall_shown','3,120','2,900','↑ 8%','HIGH'],
+    ['voice_generated','19,400','14,300','↑ 22%','MED'],
+    ['magic_mode_started','6,840','6,200','↑ 31%','HIGH'],
+    ['subscription_created','284','284','↑ 23%','CRITICAL'],
+    ['render_queued','8,400','6,900','↑ 14%','MED'],
+    ['viral_blueprint_used','1,240','940','↑ 44%','MED'],
+  ];
+  document.getElementById('events-table').innerHTML=events.map(e=>`<tr><td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal)">${e[0]}</span></td><td style="font-family:'JetBrains Mono',monospace">${e[1]}</td><td style="font-family:'JetBrains Mono',monospace">${e[2]}</td><td style="color:var(--grn)">${e[3]}</td><td><span class="pill ${e[4]==='CRITICAL'?'p-rose':e[4]==='HIGH'?'p-amb':'p-vio'}">${e[4]}</span></td></tr>`).join('');
+}
+
+// ── BUILD REVENUE ──
+function buildRevenue(){
+  // Waterfall
+  const wf={items:[{l:'Jan MRR',v:182000,c:C.teal},{l:'New MRR',v:18400,c:C.grn},{l:'Expansion',v:4200,c:C.vio},{l:'Contraction',v:-3100,c:C.rose},{l:'Churn',v:-6800,c:C.rose},{l:'Jun MRR',v:194700,c:C.grn}]};
+  setTimeout(()=>{
+    const svg=document.getElementById('waterfall-chart'); if(!svg) return;
+    const W=svg.clientWidth||600; svg.setAttribute('viewBox',`0 0 ${W} 200`); svg.innerHTML='';
+    const pad={l:50,r:20,t:16,b:28}; const cw=W-pad.l-pad.r; const ch=200-pad.t-pad.b;
+    const min=150000, max=210000, range=max-min;
+    const bw=cw/wf.items.length*0.65; const gap=cw/wf.items.length;
+    let running=182000;
+    wf.items.forEach((item,i)=>{
+      const isTotal=i===0||i===wf.items.length-1;
+      const base=isTotal?min:running;
+      const top=isTotal?item.v:running+(item.v>0?item.v:0);
+      const bot=isTotal?min:running+(item.v<0?item.v:0);
+      const y1=pad.t+ch*(1-(top-min)/range);
+      const y2=pad.t+ch*(1-(bot-min)/range);
+      const x=pad.l+gap*i+gap*0.175;
+      const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x',x);rect.setAttribute('y',y1);rect.setAttribute('width',bw);rect.setAttribute('height',Math.max(y2-y1,4));
+      rect.setAttribute('rx','4');rect.setAttribute('fill',item.c);rect.setAttribute('opacity','0.85');
+      svg.appendChild(rect);
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',x+bw/2);t.setAttribute('y',200-6);t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','9');t.setAttribute('fill','rgba(238,238,255,.4)');t.setAttribute('font-family','JetBrains Mono');
+      t.textContent=item.l;svg.appendChild(t);
+      if(!isTotal) running+=item.v;
+    });
+  },100);
+  // plan dist donut
+  setTimeout(()=>{
+    const svg=document.getElementById('plan-dist-chart'); if(!svg) return;
+    const W=svg.clientWidth||300; svg.setAttribute('viewBox',`0 0 ${W} 200`); svg.innerHTML='';
+    const plans=[{n:'Creator Pro',v:72,c:C.vio},{n:'Studio',v:18,c:C.teal},{n:'Free→Paid',c:C.org,v:10}];
+    const cx=W/2,cy=100,r=70;let angle=-Math.PI/2;
+    plans.forEach(p=>{
+      const a=p.v/100*2*Math.PI;
+      const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+      const x2=cx+r*Math.cos(angle+a),y2=cy+r*Math.sin(angle+a);
+      const large=a>Math.PI?1:0;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',`M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z`);
+      path.setAttribute('fill',p.c);path.setAttribute('opacity','0.85');svg.appendChild(path);
+      const mx=cx+(r*0.65)*Math.cos(angle+a/2),my=cy+(r*0.65)*Math.sin(angle+a/2);
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',mx);t.setAttribute('y',my+4);t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','10');t.setAttribute('fill','#fff');t.setAttribute('font-family','JetBrains Mono');
+      t.textContent=p.v+'%';svg.appendChild(t);
+      angle+=a;
+    });
+    // center hole
+    const hole=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    hole.setAttribute('cx',cx);hole.setAttribute('cy',cy);hole.setAttribute('r','40');
+    hole.setAttribute('fill','var(--s2)');svg.appendChild(hole);
+    // legend
+    plans.forEach((p,i)=>{
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',cx);t.setAttribute('y',cy-12+i*14);t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','9');t.setAttribute('fill',p.c);t.setAttribute('font-family','JetBrains Mono');
+      t.textContent=p.n;svg.appendChild(t);
+    });
+  },100);
+  // txns table
+  const txns=[
+    ['aryan@***','Creator Pro','$19','paid'],
+    ['priya@***','Studio Annual','$411','paid'],
+    ['aman@***','Creator Pro','$19','paid'],
+    ['rohit@***','Creator Pro Annual','$159','paid'],
+    ['meera@***','Studio','$49','paid'],
+    ['dev@***','Creator Pro','$19','failed'],
+  ];
+  document.getElementById('txn-table').innerHTML=txns.map(tx=>`<tr><td>${tx[0]}</td><td>${tx[1]}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--grn)">${tx[2]}</td><td><span class="pill ${tx[3]==='paid'?'p-grn':'p-rose'}">${tx[3]}</span></td></tr>`).join('');
+}
+
+// ── BUILD QUEUE ──
+function buildQueue(){
+  // Workers
+  const wg=document.getElementById('worker-grid');
+  const states=['busy','busy','busy','idle','idle','idle','idle','idle','idle','idle'];
+  wg.innerHTML=states.map((s,i)=>`<div style="background:var(--s1);border:1px solid ${s==='busy'?'rgba(249,115,22,.3)':'var(--br2)'};border-radius:10px;padding:12px;text-align:center"><div style="font-size:18px;margin-bottom:4px">${s==='busy'?'⚙️':'💤'}</div><div style="font-size:11px;color:${s==='busy'?'var(--org)':'var(--muted)'};font-family:'JetBrains Mono',monospace">Worker ${i+1}</div><div style="font-size:10px;color:var(--muted)">${s==='busy'?'Rendering':'Idle'}</div></div>`).join('');
+  // Jobs
+  const jobs=[
+    {title:'Black Holes — Facts',user:'aryan_k',plan:'Pro',res:'1080p',pct:73,dur:'~1m'},
+    {title:'Motivational Story #4',user:'priya_m',plan:'Studio',res:'4K',pct:45,dur:'~3m'},
+    {title:'Top 10 Space Mysteries',user:'aman_v',plan:'Pro',res:'1080p',pct:12,dur:'~6m'},
+  ];
+  document.getElementById('queue-jobs').innerHTML=jobs.map(j=>`<div class="queue-item"><div class="qi-left"><div class="qi-title">${j.title}</div><div class="qi-meta"><span>@${j.user}</span><span><span class="pill p-vio">${j.plan}</span></span><span>${j.res}</span></div></div><div class="qi-prog-wrap"><div class="qi-prog"><div class="qi-prog-fill" style="width:${j.pct}%;background:linear-gradient(90deg,var(--vio),var(--teal))"></div></div><div class="qi-pct">${j.pct}% · ETA ${j.dur}</div></div><div class="qi-status"><span class="pill p-amb">Rendering</span></div></div>`).join('');
+  // Completed
+  const comp=[
+    ['Space Deep Dive','rohit_s','Pro','8:24','4m 12s','✓'],
+    ['5 Horror Facts','meera_j','Studio','3:10','1m 48s','✓'],
+    ['Finance Tips Short','dev_k','Pro','0:60','0m 52s','✓'],
+    ['Universe Explained','tanya_p','Free','0:58','0m 48s','✓ (watermark)'],
+    ['AI Future Video','kiran_d','Pro','12:40','8m 20s','✗ Error'],
+  ];
+  document.getElementById('completed-table').innerHTML=comp.map(c=>`<tr><td>${c[0]}</td><td style="color:var(--muted)">@${c[1]}</td><td><span class="pill ${c[2]==='Studio'?'p-teal':'p-vio'}">${c[2]}</span></td><td style="font-family:'JetBrains Mono',monospace">${c[3]}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--teal)">${c[4]}</td><td style="color:${c[5].includes('✗')?'var(--rose)':'var(--grn)'}">${c[5]}</td></tr>`).join('');
+}
+
+// ── BUILD AI ──
+function buildAI(){
+  const providers=[
+    {name:'Anthropic (Claude)',usage:'Scripts · SEO · Analysis',calls:'18,240',cost:'$184',color:C.vio},
+    {name:'OpenAI (GPT-4o-mini)',usage:'Scenes · Prompts · Hooks',calls:'34,800',cost:'$87',color:C.teal},
+    {name:'ElevenLabs (Voice EN)',usage:'Voice generation',calls:'8,400',cost:'$126',color:C.grn},
+    {name:'Azure TTS (Voice HI)',usage:'Hindi + Hinglish voice',calls:'4,200',cost:'$42',color:C.org},
+    {name:'Replicate (Flux.1)',usage:'Image generation (Phase 2)',calls:'2,100',cost:'$48',color:C.rose},
+  ];
+  document.getElementById('ai-breakdown').innerHTML=providers.map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--faint)"><div style="width:10px;height:10px;border-radius:50%;background:${p.color};flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:600">${p.name}</div><div style="font-size:11px;color:var(--muted)">${p.usage}</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">${p.calls} calls</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${p.color};min-width:50px;text-align:right">${p.cost}</div></div>`).join('');
+  const models=[
+    ['Script Studio','Claude Sonnet 4','18,240','~2,100','$184','42%'],
+    ['Hook Generator','GPT-4o-mini','8,400','~380','$21','58%'],
+    ['Scene Creator','GPT-4o-mini','14,200','~820','$42','31%'],
+    ['SEO Studio','Claude Sonnet 4','6,400','~1,400','$64','28%'],
+    ['Voice (EN)','ElevenLabs v2','8,400','—','$126','N/A'],
+    ['Voice (HI)','Azure Neural','4,200','—','$42','N/A'],
+  ];
+  document.getElementById('model-table').innerHTML=models.map(m=>`<tr><td>${m[0]}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--vio)">${m[1]}</td><td style="font-family:'JetBrains Mono',monospace">${m[2]}</td><td style="font-family:'JetBrains Mono',monospace">${m[3]}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--rose)">${m[4]}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--grn)">${m[5]}</td></tr>`).join('');
+}
+
+// ── BUILD FUNNEL ──
+function buildFunnel(){
+  const steps=[
+    {l:'Landing Page Visits',n:284000,pct:100,c:C.vio},
+    {l:'Sign Up Started',n:48000,pct:16.9,c:C.teal},
+    {l:'Registered',n:36000,pct:12.7,c:C.grn},
+    {l:'Onboarding Complete',n:28000,pct:9.9,c:C.org},
+    {l:'First Video Created',n:18400,pct:6.5,c:C.amb},
+    {l:'First Export',n:12200,pct:4.3,c:C.rose},
+    {l:'Upgrade to Paid',n:4200,pct:1.5,c:C.grn},
+  ];
+  document.getElementById('funnel-steps').innerHTML=steps.map((s,i)=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span>${s.l}</span><span style="font-family:'JetBrains Mono',monospace;color:${s.c}">${s.n.toLocaleString()} (${s.pct}%)</span></div><div style="height:32px;background:var(--s1);border-radius:8px;overflow:hidden"><div style="height:100%;width:${s.pct}%;background:${s.c};opacity:.8;border-radius:8px;display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;min-width:60px;color:${i>4?'#000':'#fff'}">${i>0?'→ '+((s.n/steps[i-1].n*100).toFixed(0))+'% step rate':''}</div></div></div>`).join('');
+  const triggers=[
+    {l:'Export > 1 minute',n:2840,c:C.org},
+    {l:'Watermark removal',n:1120,c:C.vio},
+    {l:'Voice Studio click',n:980,c:C.teal},
+    {l:'1080p quality click',n:760,c:C.grn},
+    {l:'Viral Blueprint click',n:420,c:C.rose},
+  ];
+  document.getElementById('upgrade-triggers').innerHTML=triggers.map(tr=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--faint)"><div style="width:8px;height:8px;border-radius:50%;background:${tr.c};flex-shrink:0"></div><span style="flex:1;font-size:13px">${tr.l}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${tr.c}">${tr.n.toLocaleString()}</span></div>`).join('');
+  const drops=[
+    {l:'Onboarding Step 3 (Niche)',drop:'18%',fix:'Simplify options'},
+    {l:'After script (before voice)',drop:'24%',fix:'Auto-preview voice'},
+    {l:'Export length wall',drop:'31%',fix:'Show value before limit'},
+    {l:'Voice generation wait',drop:'12%',fix:'Better progress feedback'},
+  ];
+  document.getElementById('dropoff-points').innerHTML=drops.map(d=>`<div style="padding:10px 12px;background:var(--s1);border:1px solid rgba(244,63,94,.15);border-radius:9px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px">${d.l}</span><span style="color:var(--rose);font-size:13px;font-weight:700">−${d.drop}</span></div><div style="font-size:12px;color:var(--grn)">Fix: ${d.fix}</div></div>`).join('');
+}
+
+// ── BUILD COHORTS ──
+function buildCohorts(){
+  const cohorts=[
+    {month:'Jan 2026',w:[100,68,51,42,38,34,31,29,28]},
+    {month:'Feb 2026',w:[100,71,54,45,40,36,33,30]},
+    {month:'Mar 2026',w:[100,72,56,47,42,38,34]},
+    {month:'Apr 2026',w:[100,70,53,44,39,35]},
+    {month:'May 2026',w:[100,69,52,43,38]},
+    {month:'Jun 2026',w:[100,68,51,42]},
+  ];
+  const maxPct=100;
+  const ct=document.getElementById('cohort-table');
+  // header
+  let html=`<div style="display:flex;gap:4px;margin-bottom:4px;padding-left:84px"><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)">`;
+  html+=(['W0','W1','W2','W3','W4','W5','W6','W7','W8'].map(w=>`<span style="flex:1;min-width:48px;text-align:center;display:inline-block">${w}</span>`).join(''))+'</div></div>';
+  cohorts.forEach(c=>{
+    html+=`<div class="cohort-row"><div class="cohort-label">${c.month}</div>`;
+    c.w.forEach(v=>{
+      const alpha=v/maxPct*0.9;
+      const color=v>=60?`rgba(16,185,129,${alpha})`:v>=40?`rgba(245,158,11,${alpha})`:v>=20?`rgba(249,115,22,${alpha})`:`rgba(244,63,94,${alpha})`;
+      html+=`<div class="cohort-cell" style="background:${color};color:#fff;font-size:11px;font-weight:700;flex:1;min-width:48px">${v}%</div>`;
+    });
+    html+='</div>';
+  });
+  ct.innerHTML=html;
+}
+
+// ── BUILD USERS ──
+function buildUsers(){
+  const users=[
+    {email:'aryan@***',plan:'Creator Pro',niche:'Space/Science',vids:14,joined:'Jun 1',status:'active'},
+    {email:'priya@***',plan:'Studio',niche:'Motivation',vids:28,joined:'May 12',status:'active'},
+    {email:'aman@***',plan:'Creator Pro',niche:'Horror',vids:8,joined:'Jun 8',status:'active'},
+    {email:'rohit@***',plan:'Free',niche:'Facts',vids:2,joined:'Jun 13',status:'active'},
+    {email:'meera@***',plan:'Studio',niche:'Educational',vids:41,joined:'Apr 2',status:'active'},
+    {email:'dev@***',plan:'Creator Pro',niche:'Finance',vids:6,joined:'Jun 11',status:'at-risk'},
+  ];
+  document.getElementById('users-table').innerHTML=users.map(u=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:12px">${u.email}</td><td><span class="pill ${u.plan==='Studio'?'p-teal':u.plan==='Creator Pro'?'p-vio':'p-rose'}">${u.plan}</span></td><td style="color:var(--muted)">${u.niche}</td><td style="font-family:'JetBrains Mono',monospace">${u.vids}</td><td style="color:var(--muted)">${u.joined}</td><td><span class="pill ${u.status==='active'?'p-grn':'p-amb'}">${u.status}</span></td></tr>`).join('');
+}
+
+// ── BUILD RETENTION ──
+function buildRetention(){
+  const weeks=Array.from({length:12},(_,i)=>'W'+i);
+  const plans=[
+    {label:'Studio',data:[100,82,71,64,58,53,49,46,43,41,39,38],color:C.teal},
+    {label:'Creator Pro',data:[100,72,58,49,43,38,34,31,29,27,25,24],color:C.vio},
+    {label:'Free',data:[100,48,31,22,16,12,9,7,6,5,4,4],color:C.muted||'#666'},
+  ];
+  setTimeout(()=>lineChart('retention-chart',plans,weeks,220),100);
+}
+
+// ── INIT ──
+buildOverview();
+
+// ── TOAST ──
+function t(msg){const el=document.getElementById('toastEl');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>el.classList.remove('show'),3000)}
+</script>
+</body>
+</html>
